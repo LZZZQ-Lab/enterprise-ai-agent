@@ -1,0 +1,14 @@
+{
+  "training_data_path": "data/finetune_demo/enterprise_sft.jsonl",
+  "model_path": "sshleifer/tiny-gpt2",
+  "output_dir": "artifacts/finetune/demo_smoke",
+  "batch_size": 2,
+  "learning_rate": 5e-5,
+  "num_train_epochs": 1,
+  "max_steps": 8,
+  "max_seq_length": 128,
+  "eval_ratio": 0.2,
+  "logging_steps": 2,
+  "save_steps": 100,
+  "seed": 42
+}

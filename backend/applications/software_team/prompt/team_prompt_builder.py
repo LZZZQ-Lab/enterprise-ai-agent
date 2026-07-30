@@ -3,9 +3,9 @@ from __future__ import annotations
 from app.agents.types import AgentContext
 from app.llm.types import Message
 from app.memory.manager import MemoryManager
-from app.runtime.config import AgentConfig
-from app.runtime.prompt_builder import PromptBuilder
-from app.runtime.tracer import AgentTracer
+from app.config import AgentConfig
+from app.prompts.builder import PromptBuilder
+from app.agents.executor.tracer import AgentTracer
 
 from applications.software_team.agents.base.coordinator_context import (
     CoordinatorContext,

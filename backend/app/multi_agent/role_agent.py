@@ -4,7 +4,7 @@ from app.agents.types import AgentContext
 from app.agents.types import AgentResult
 from app.multi_agent.agent import Agent
 from app.multi_agent.profile import AgentProfile
-from app.runtime.config import AgentConfig
+from app.config import AgentConfig
 
 
 class RoleAgent(Agent):
@@ -89,6 +89,7 @@ class RoleAgent(Agent):
 def create_role_agent(
     profile: AgentProfile,
     base_config: AgentConfig | None = None,
+    client: Any | None = None,
 ) -> RoleAgent:
     """
     工厂方法：创建带独立 System Prompt 的 RoleAgent。
@@ -96,7 +97,7 @@ def create_role_agent(
 
     from app.agents.chat_agent import ChatAgent
 
-    config = base_config or AgentConfig()
+    config = base_config or AgentConfig.from_env()
 
     role_config = AgentConfig(
         max_iterations=config.max_iterations,
@@ -109,6 +110,7 @@ def create_role_agent(
             "Be concise and helpful."
         ),
         enable_rag=config.enable_rag,
+        enable_knowledge_tool=config.enable_knowledge_tool,
         top_k=config.top_k,
         score_threshold=config.score_threshold,
         enable_mcp=config.enable_mcp,
@@ -127,7 +129,10 @@ def create_role_agent(
         communication_mode=config.communication_mode,
     )
 
-    chat_agent = ChatAgent(config=role_config)
+    chat_agent = ChatAgent(
+        config=role_config,
+        client=client,
+    )
 
     return RoleAgent(
         profile=profile,

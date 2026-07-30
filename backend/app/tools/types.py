@@ -12,6 +12,8 @@ class ToolContext:
 
     arguments: dict[str, Any]
 
+    approval_token: str | None = None
+
 
 @dataclass
 class ToolResult:

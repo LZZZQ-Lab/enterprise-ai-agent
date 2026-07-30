@@ -1,9 +1,9 @@
-from app.llm.client import LLMClient
+from app.llm.openai_provider import OpenAIProvider
 
 
 def main() -> None:
     broken = '{"path": "docs/PRD.md", "content": "# PRD\\n\\nHello **world**'
-    args = LLMClient._parse_arguments("write_file", broken)
+    args = OpenAIProvider._parse_arguments("write_file", broken)
 
     assert args.get("path") == "docs/PRD.md"
     assert "PRD" in args.get("content", "")

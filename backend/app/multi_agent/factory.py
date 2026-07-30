@@ -4,8 +4,8 @@ from app.multi_agent.registry import AgentRegistry
 from app.multi_agent.role_agent import create_role_agent
 from app.multi_agent.router import create_router
 from app.multi_agent.template_agent import TemplateAgent
-from app.runtime.config import AgentConfig
-from app.runtime.tracer import AgentTracer
+from app.config import AgentConfig
+from app.agents.executor.tracer import AgentTracer
 
 
 def create_travel_profiles() -> list[AgentProfile]:
@@ -53,7 +53,7 @@ def create_travel_registry(
     注册 Travel / Weather / Hotel / Summary Agent。
     """
 
-    config = config or AgentConfig(
+    config = config or AgentConfig.from_env(
         enable_multi_agent=True,
     )
 
@@ -118,7 +118,7 @@ def create_travel_coordinator(
     创建东京旅行 Multi-Agent Coordinator。
     """
 
-    config = config or AgentConfig(
+    config = config or AgentConfig.from_env(
         enable_multi_agent=True,
         router_type="rule",
         max_agents=10,

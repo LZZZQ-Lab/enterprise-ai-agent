@@ -9,10 +9,10 @@ from app.multi_agent.router import RuleBasedRouter
 from app.multi_agent.shared_memory import SharedMemory
 from app.multi_agent.task import Task
 from app.multi_agent.task import TaskStatus
-from app.runtime.config import AgentConfig
+from app.config import AgentConfig
 
 if TYPE_CHECKING:
-    from app.runtime.tracer import AgentTracer
+    from app.agents.executor.tracer import AgentTracer
 
 
 class Coordinator:
@@ -34,7 +34,7 @@ class Coordinator:
     ):
 
         self._registry = registry
-        self._config = config or AgentConfig()
+        self._config = config or AgentConfig.from_env()
         self._router = router or RuleBasedRouter()
         self._message_bus = message_bus or MessageBus()
         self._shared_memory = shared_memory or SharedMemory()

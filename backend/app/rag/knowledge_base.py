@@ -58,9 +58,19 @@ class KnowledgeBase:
                 self.kb_id,
             )
 
-            vector = self._embedding_provider.embed(
-                chunk.content
-            )
+        if not chunks:
+
+            return chunks
+
+        vectors = self._embedding_provider.embed(
+            [chunk.content for chunk in chunks]
+        )
+
+        for chunk, vector in zip(
+            chunks,
+            vectors,
+            strict=True,
+        ):
 
             self._vector_store.add(
                 chunk,

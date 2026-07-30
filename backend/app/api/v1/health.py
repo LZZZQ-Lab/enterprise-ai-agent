@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from app.config import settings
+
 router = APIRouter(tags=["Health"])
 
 
@@ -10,6 +12,6 @@ def health():
 
         "status": "ok",
 
-        "project": "Enterprise AI Agent"
+        "project": settings.APP_NAME,
 
     }

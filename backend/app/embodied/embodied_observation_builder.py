@@ -1,7 +1,7 @@
 from app.embodied.observation_factory import ObservationFactory
 from app.embodied.types import ObservationType
 from app.llm.types import Message
-from app.runtime.observation_builder import ObservationBuilder
+from app.agents.executor.observation_builder import ObservationBuilder
 from app.tools.types import ToolResult
 
 

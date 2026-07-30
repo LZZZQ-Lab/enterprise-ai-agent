@@ -1,13 +1,17 @@
 from dataclasses import dataclass
 from dataclasses import field
+from typing import Any
 
 from app.observability.types import LLMEvent
 from app.observability.types import PlannerEvent
 from app.observability.types import PromptEvent
 from app.observability.types import RetrievalEvent
 from app.observability.types import ToolEvent
+from app.observability.types import Trace
 from app.observability.types import TraceEvent
 from app.observability.types import TraceEventType
+from app.observability.types import AgentSpanEvent
+from app.observability.types import GPUMetricsEvent
 
 
 @dataclass
@@ -141,4 +145,105 @@ class MetricsCollector:
             "plan_step_count": metrics.plan_step_count,
             "prompt_length": metrics.prompt_length,
             "rag_hit_count": metrics.rag_hit_count,
+        }
+
+
+@dataclass
+class EnterpriseTraceMetrics:
+    """
+    企业级 Trace 指标（Task 6.4）。
+    """
+
+    agent_duration_ms: float = 0.0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    tool_call_count: int = 0
+    llm_call_count: int = 0
+    llm_latency_ms: float = 0.0
+    ttft_ms: float = 0.0
+    tokens_per_second: float = 0.0
+    gpu_memory_used_mib: float | None = None
+    gpu_utilization_percent: float | None = None
+
+
+class EnterpriseMetricsAggregator(MetricsCollector):
+    """
+    扩展 MetricsCollector，聚合 LLM / GPU / Agent 跨度指标。
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.enterprise = EnterpriseTraceMetrics()
+
+    def record(self, event: TraceEvent) -> None:
+        super().record(event)
+
+        if isinstance(event, AgentSpanEvent) and event.phase == "end":
+            self.enterprise.agent_duration_ms = max(
+                self.enterprise.agent_duration_ms,
+                event.duration_ms,
+            )
+            self.enterprise.prompt_tokens = event.prompt_tokens
+            self.enterprise.completion_tokens = event.completion_tokens
+            self.enterprise.total_tokens = event.total_tokens
+            self.enterprise.tool_call_count = max(
+                self.enterprise.tool_call_count,
+                event.tool_call_count,
+            )
+
+        elif isinstance(event, LLMEvent):
+            self.enterprise.llm_call_count += 1
+            self.enterprise.llm_latency_ms += event.duration_ms
+
+            if event.ttft_ms is not None:
+                self.enterprise.ttft_ms = max(
+                    self.enterprise.ttft_ms,
+                    event.ttft_ms,
+                )
+
+            if event.tokens_per_second is not None:
+                self.enterprise.tokens_per_second = max(
+                    self.enterprise.tokens_per_second,
+                    event.tokens_per_second,
+                )
+
+            self.enterprise.prompt_tokens += event.prompt_tokens
+            self.enterprise.completion_tokens += event.completion_tokens
+            self.enterprise.total_tokens = (
+                self.enterprise.prompt_tokens
+                + self.enterprise.completion_tokens
+            )
+
+        elif isinstance(event, ToolEvent):
+            self.enterprise.tool_call_count = self.metrics.tool_call_count
+
+        elif isinstance(event, GPUMetricsEvent):
+            if event.phase == "agent_end":
+                self.enterprise.gpu_memory_used_mib = event.memory_used_mib
+                self.enterprise.gpu_utilization_percent = (
+                    event.utilization_percent
+                )
+
+    @staticmethod
+    def summarize_trace(trace: Trace) -> dict[str, Any]:
+        aggregator = EnterpriseMetricsAggregator()
+
+        for event in trace.events:
+            aggregator.record(event)
+
+        ent = aggregator.enterprise
+        base = aggregator.summarize()
+
+        return {
+            **base,
+            "agent_duration_ms": ent.agent_duration_ms,
+            "total_tokens": ent.total_tokens,
+            "prompt_tokens": ent.prompt_tokens,
+            "completion_tokens": ent.completion_tokens,
+            "llm_latency_ms": ent.llm_latency_ms,
+            "ttft_ms": ent.ttft_ms,
+            "tokens_per_second": ent.tokens_per_second,
+            "gpu_memory_used_mib": ent.gpu_memory_used_mib,
+            "gpu_utilization_percent": ent.gpu_utilization_percent,
         }

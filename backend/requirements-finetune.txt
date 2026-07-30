@@ -1,0 +1,7 @@
+# Task 4.1 微调依赖（需先安装 requirements-llm.txt / PyTorch）
+#
+# pip install -r requirements-finetune.txt
+
+datasets>=2.19.0
+peft>=0.11.0
+bitsandbytes>=0.43.0; platform_system != "Darwin"

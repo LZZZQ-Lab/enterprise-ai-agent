@@ -1,0 +1,20 @@
+{
+  "experiment_name": "lora_smoke_tiny",
+  "training_data_path": "data/finetune_demo/enterprise_sft.jsonl",
+  "model_path": "sshleifer/tiny-gpt2",
+  "output_dir": "artifacts/finetune/lora_demo_smoke",
+  "batch_size": 1,
+  "learning_rate": 5e-4,
+  "max_steps": 6,
+  "max_seq_length": 128,
+  "eval_ratio": 0.2,
+  "logging_steps": 2,
+  "save_steps": 100,
+  "seed": 42,
+  "lora": {
+    "r": 4,
+    "alpha": 8,
+    "dropout": 0.05,
+    "load_in_4bit": false
+  }
+}

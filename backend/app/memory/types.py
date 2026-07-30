@@ -1,5 +1,15 @@
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Any
+
+
+class MemoryKind(str, Enum):
+    """企业 Memory 分区类型（Task 6.7）。"""
+
+    CONVERSATION = "conversation"
+    PROJECT = "project"
+    SHARED = "shared"
+    KNOWLEDGE = "knowledge"
 
 
 @dataclass

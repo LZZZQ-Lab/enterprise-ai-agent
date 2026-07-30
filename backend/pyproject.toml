@@ -1,0 +1,26 @@
+[project]
+name = "enterprise-ai-agent-backend"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["app", "../tests", "../apps", "../core", "../llm", "../knowledge", "../infra", "benchmark", "loadtest", "scripts"]
+
+exclude = [
+    ".venv",
+    ".venv-api",
+    ".venv-vllm",
+    "project_runs",
+    "workspace",
+    "tmp-tester-demo",
+    "node_modules",
+]
+
+[tool.ruff.lint]
+# CI 门禁：语法错误 + 未定义名称（避免全量风格规则导致历史代码无法通过）
+select = ["E9", "F821"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["F821"]

@@ -1,0 +1,16 @@
+# vLLM 推理服务依赖（Linux / WSL2 推荐）
+#
+# 官方 vLLM 主要支持 Linux。Windows 原生请参考 docs/vllm_deployment.md 中的 WSL2 方案。
+#
+# 安装前请先安装匹配 CUDA 的 PyTorch:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+#
+# 再安装 vLLM（需先装好 cu124 的 torch，避免 pip 自动升级到 cu130）:
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#   pip install "vllm>=0.6.0,<0.11.0"
+#
+# 若已误装 vLLM 0.25 + torch cu130 导致驱动报错，运行:
+#   bash scripts/fix_vllm_cu124.sh
+
+vllm>=0.6.0,<0.11.0
+httpx>=0.28.0

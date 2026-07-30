@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from app.core.config import settings
+from app.config import settings
 
 
 if hasattr(sys.stdout, "reconfigure"):

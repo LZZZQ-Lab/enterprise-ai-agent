@@ -1,0 +1,26 @@
+{
+  "baseline": {
+    "label": "baseline",
+    "description": "Task 2.4 默认：保守显存与 eager，便于 4GB 稳定启动",
+    "max_model_len": 512,
+    "gpu_memory_utilization": 0.7,
+    "max_num_seqs": 16,
+    "max_num_batched_tokens": 2048,
+    "swap_space_gb": 2,
+    "enable_prefix_caching": false,
+    "enforce_eager": true,
+    "client_max_tokens": 128
+  },
+  "optimized": {
+    "label": "optimized",
+    "description": "Task 4.4：提高 GPU 利用率、批处理与 KV prefix cache",
+    "max_model_len": 512,
+    "gpu_memory_utilization": 0.82,
+    "max_num_seqs": 32,
+    "max_num_batched_tokens": 4096,
+    "swap_space_gb": 2,
+    "enable_prefix_caching": true,
+    "enforce_eager": false,
+    "client_max_tokens": 128
+  }
+}

@@ -11,6 +11,7 @@ build/
 
 # Virtual environments
 .venv/
+.venv-*/
 venv/
 env/
 
@@ -58,3 +59,13 @@ backend/workspace/**/.pytest_cache/
 
 # Platform runtime audit log
 backend/platform_data/audit.json
+
+# Local runs / demos output (Task 9.x)
+project_runs/
+backend/project_runs/
+examples/_output/
+backend/tmp-*/
+backend/workspace/
+
+# Knowledge uploads (runtime data)
+backend/data/knowledge_uploads/

@@ -9,8 +9,22 @@ from app.observability.exporter import JSONTraceExporter
 from app.observability.exporter import OpenTelemetryTraceExporter
 from app.observability.exporter import TraceExporter
 from app.observability.exporter import create_trace_exporter
+from app.observability.metrics import EnterpriseMetricsAggregator
+from app.observability.metrics import EnterpriseTraceMetrics
 from app.observability.metrics import MetricsCollector
 from app.observability.metrics import TraceMetrics
+from app.observability.trace import TraceRegistry
+from app.observability.trace import agent_execution_trace
+from app.observability.trace import default_trace_registry
+from app.observability.trace import get_active_trace_collector
+from app.observability.trace import render_execution_timeline
+from app.observability.logger import ObservabilityLogger
+from app.observability.logger import default_observability_logger
+from app.observability.event import agent_end_event
+from app.observability.event import agent_start_event
+from app.observability.event import gpu_event_from_collector
+from app.observability.event import llm_performance_event
+from app.observability.event import tool_invocation_event
 from app.observability.player import TracePlayer
 from app.observability.serialization import event_to_dict
 from app.observability.serialization import trace_to_dict
@@ -51,6 +65,20 @@ __all__ = [
     "create_trace_exporter",
     "MetricsCollector",
     "TraceMetrics",
+    "EnterpriseMetricsAggregator",
+    "EnterpriseTraceMetrics",
+    "TraceRegistry",
+    "default_trace_registry",
+    "agent_execution_trace",
+    "get_active_trace_collector",
+    "render_execution_timeline",
+    "ObservabilityLogger",
+    "default_observability_logger",
+    "agent_start_event",
+    "agent_end_event",
+    "gpu_event_from_collector",
+    "llm_performance_event",
+    "tool_invocation_event",
     "Evaluator",
     "RuleBasedEvaluator",
     "LLMJudgeEvaluator",

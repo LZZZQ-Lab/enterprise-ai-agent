@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 from app.llm.factory import get_llm_client
 from app.memory.manager import MemoryManager
-from app.runtime.agent_executor import AgentExecutor
-from app.runtime.config import AgentConfig
-from app.runtime.error_handler import AgentErrorHandler
-from app.runtime.observation_builder import ObservationBuilder
-from app.runtime.tool_message_builder import ToolMessageBuilder
-from app.runtime.tracer import AgentTracer
+from app.agents.executor.agent_executor import AgentExecutor
+from app.config import AgentConfig
+from app.agents.executor.error_handler import AgentErrorHandler
+from app.agents.executor.observation_builder import ObservationBuilder
+from app.agents.executor.tool_message_builder import ToolMessageBuilder
+from app.agents.executor.tracer import AgentTracer
 from app.tools.manager import ToolManager
 
 from applications.software_team.config.settings import SoftwareTeamSettings

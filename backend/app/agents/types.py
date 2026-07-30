@@ -7,8 +7,8 @@ from app.memory.types import MemoryRecord
 
 if TYPE_CHECKING:
     from app.embodied.types import Observation
-    from app.runtime.plan.types import Plan
-    from app.runtime.plan.types import PlanStep
+    from app.agents.executor.plan.types import Plan
+    from app.agents.executor.plan.types import PlanStep
 
 
 @dataclass

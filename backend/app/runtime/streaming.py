@@ -1,34 +1,6 @@
-from abc import ABC
-from abc import abstractmethod
+"""兼容层：请改用 app.agents.executor.streaming。"""
 
-from typing import TYPE_CHECKING
+from app.agents.executor.streaming import StreamingAgent
+from app.agents.executor.streaming import StreamingExecutor
 
-if TYPE_CHECKING:
-    from app.agents.types import AgentContext
-    from app.agents.types import AgentResult
-
-
-class StreamingAgent(ABC):
-    """
-    流式 Agent 接口（预留，T7.9 不实现具体逻辑）。
-    """
-
-    @abstractmethod
-    def stream_execute(
-        self,
-        context: "AgentContext",
-    ):
-        pass
-
-
-class StreamingExecutor(ABC):
-    """
-    流式执行器接口（预留，T7.9 不实现具体逻辑）。
-    """
-
-    @abstractmethod
-    def stream(
-        self,
-        context: "AgentContext",
-    ):
-        pass
+__all__ = ["StreamingAgent", "StreamingExecutor"]

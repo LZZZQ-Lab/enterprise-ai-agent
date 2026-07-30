@@ -1,0 +1,91 @@
+# Task 2.7: Enterprise stack — FastAPI backend + vLLM (GPU)
+#
+# Usage (from repository root):
+#   docker compose -f infra/docker/docker-compose.yml up --build
+# 兼容旧路径：docker compose -f docker/docker-compose.yml up --build
+#
+# Requirements:
+#   - Docker Engine 24+ / Docker Desktop
+#   - NVIDIA GPU + [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+#   - First start downloads model weights (~1GB) into volume hf-cache
+
+name: enterprise-ai-agent
+
+services:
+  llm:
+    image: vllm/vllm-openai:v0.10.2
+    container_name: enterprise-ai-llm
+    ipc: host
+    ports:
+      - "${LLM_HOST_PORT:-8000}:8000"
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      HF_ENDPOINT: ${HF_ENDPOINT:-https://hf-mirror.com}
+      VLLM_USE_FLASHINFER_SAMPLER: ${VLLM_USE_FLASHINFER_SAMPLER:-0}
+    gpus: all
+    command:
+      - --model
+      - ${VLLM_MODEL:-Qwen/Qwen2.5-0.5B-Instruct}
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --served-model-name
+      - ${VLLM_SERVED_MODEL_NAME:-Qwen/Qwen2.5-0.5B-Instruct}
+      - --max-model-len
+      - "${VLLM_MAX_LEN:-512}"
+      - --gpu-memory-utilization
+      - "${VLLM_GPU_UTIL:-0.65}"
+      - --swap-space
+      - "2"
+      - --enforce-eager
+      - --dtype
+      - auto
+      - --trust-remote-code
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\"",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 600s
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}
+    container_name: enterprise-ai-backend
+    ports:
+      - "${BACKEND_HOST_PORT:-8001}:8001"
+    environment:
+      APP_NAME: ${APP_NAME:-Enterprise AI Agent}
+      DEBUG: ${DEBUG:-false}
+      HOST: 0.0.0.0
+      PORT: "8001"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MODEL_PROVIDER: ${MODEL_PROVIDER:-vllm}
+      MODEL_NAME: ${MODEL_NAME:-Qwen/Qwen2.5-0.5B-Instruct}
+      VLLM_ENDPOINT: http://llm:8000/v1
+      VLLM_API_KEY: ${VLLM_API_KEY:-EMPTY}
+      VLLM_MAX_TOKENS: ${VLLM_MAX_TOKENS:-256}
+      TEMPERATURE: ${TEMPERATURE:-0.7}
+      MAX_TOKENS: ${MAX_TOKENS:-4096}
+      MAX_AGENT_LOOP: ${MAX_AGENT_LOOP:-5}
+    depends_on:
+      llm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  hf-cache:

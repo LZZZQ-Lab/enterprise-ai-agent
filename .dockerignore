@@ -1,0 +1,13 @@
+# Docker build context exclusions (context = repo root)
+**/.git
+**/.venv
+**/.venv-vllm
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/node_modules
+backend/benchmark/results
+backend/logs
+**/.env
+!.env.example
+docker/env.example

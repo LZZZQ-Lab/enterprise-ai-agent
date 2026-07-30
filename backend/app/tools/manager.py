@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.mcp.server_manager import MCPServerManager
-    from app.runtime.config import AgentConfig
-    from app.runtime.tracer import AgentTracer
+    from app.config import AgentConfig
+    from app.agents.executor.tracer import AgentTracer
 
 
 class ToolManager:
@@ -25,12 +25,24 @@ class ToolManager:
         tracer: "AgentTracer | None" = None,
     ):
 
-        from app.runtime.config import AgentConfig
+        from app.config import AgentConfig
 
-        self._config = config or AgentConfig()
+        self._config = config or AgentConfig.from_env()
         self._mcp_server_manager = mcp_server_manager
         self._tracer = tracer
         self._mcp_tools: dict[str, object] = {}
+
+        ToolFactory.initialize()
+
+        if self._config.enable_knowledge_tool:
+
+            from app.tools.knowledge_tool import (
+                register_search_knowledge_tool,
+            )
+
+            register_search_knowledge_tool(
+                default_top_k=self._config.top_k,
+            )
 
         if (
             self._config.enable_mcp
@@ -65,6 +77,22 @@ class ToolManager:
             for tool in self._mcp_server_manager.discover_tools()
         }
 
+        if self._should_sync_mcp_to_registry():
+
+            self._sync_mcp_tools_to_registry()
+
+    def _should_sync_mcp_to_registry(self) -> bool:
+
+        from app.config.settings import get_settings
+
+        return get_settings().MCP_SYNC_TO_REGISTRY
+
+    def _sync_mcp_tools_to_registry(self) -> None:
+
+        for tool in self._mcp_tools.values():
+
+            ToolRegistry.register(tool)
+
     def get_schemas(self) -> list[dict]:
 
         schemas = ToolRegistry.get_schemas()
@@ -88,6 +116,35 @@ class ToolManager:
         self,
         context: ToolContext,
     ) -> ToolResult:
+
+        from app.config.settings import get_settings
+
+        settings = get_settings()
+        if settings.ENABLE_DANGEROUS_TOOL_APPROVAL or settings.ENABLE_INPUT_VALIDATION:
+            from security.guard import check_tool_execution
+            from security.guard import format_approval_required_result
+            from security.guard import set_approval_token
+
+            if context.approval_token:
+                set_approval_token(context.approval_token)
+
+            block = check_tool_execution(
+                context.tool_name,
+                context.arguments,
+            )
+            if block is not None and not block.allowed:
+                if block.needs_approval and block.approval_id:
+                    return ToolResult(
+                        success=False,
+                        content=format_approval_required_result(
+                            block.approval_id,
+                            context.tool_name,
+                        ),
+                    )
+                return ToolResult(
+                    success=False,
+                    content=f"Security blocked: {block.reason}",
+                )
 
         if context.tool_name in self._mcp_tools:
 

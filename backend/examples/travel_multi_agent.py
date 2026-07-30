@@ -17,8 +17,8 @@ Task 12 示例：Multi-Agent 东京旅行规划。
 import argparse
 
 from app.multi_agent.factory import create_travel_coordinator
-from app.runtime.config import AgentConfig
-from app.runtime.tracer import AgentTracer
+from app.config import AgentConfig
+from app.agents.executor.tracer import AgentTracer
 
 
 def main() -> None:

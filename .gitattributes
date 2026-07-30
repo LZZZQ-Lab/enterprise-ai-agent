@@ -1,0 +1,3 @@
+# WSL/bash scripts must use LF (avoid $'\r': command not found)
+*.sh text eol=lf
+backend/benchmark/*.sh text eol=lf

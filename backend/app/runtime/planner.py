@@ -1,13 +1,6 @@
-"""
-向后兼容导出。
+"""兼容层：请改用 app.agents.executor.planner。"""
 
-Task10 将 Planner / Workflow 迁移至 runtime.plan 模块。
-"""
+from app.agents.executor.planner import NoPlanner
+from app.agents.executor.planner import Planner
 
-from app.runtime.plan.planner import NoPlanner
-from app.runtime.plan.planner import Planner
-
-__all__ = [
-    "Planner",
-    "NoPlanner",
-]
+__all__ = ["NoPlanner", "Planner"]

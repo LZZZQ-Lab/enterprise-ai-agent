@@ -1,29 +1,7 @@
-from app.runtime.agent_executor import AgentExecutor
-from app.runtime.config import AgentConfig
-from app.runtime.error_handler import AgentErrorHandler
-from app.runtime.observation_builder import ObservationBuilder
-from app.runtime.planner import NoPlanner
-from app.runtime.planner import Planner
-from app.runtime.prompt_builder import PromptBuilder
-from app.runtime.streaming import StreamingAgent
-from app.runtime.streaming import StreamingExecutor
-from app.runtime.tool_message_builder import ToolMessageBuilder
-from app.runtime.tracer import AgentTracer
-from app.runtime.workflow import SequentialWorkflow
-from app.runtime.workflow import Workflow
+"""
+兼容层：Runtime 已迁移至 app.agents.executor。
 
-__all__ = [
-    "AgentConfig",
-    "AgentExecutor",
-    "AgentErrorHandler",
-    "AgentTracer",
-    "NoPlanner",
-    "ObservationBuilder",
-    "Planner",
-    "PromptBuilder",
-    "SequentialWorkflow",
-    "StreamingAgent",
-    "StreamingExecutor",
-    "ToolMessageBuilder",
-    "Workflow",
-]
+deprecated: 请改用 app.agents.executor
+"""
+
+from app.agents.executor import *  # noqa: F403

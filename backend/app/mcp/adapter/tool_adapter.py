@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.mcp.client.base import MCPClient
+from app.mcp.clients.base import MCPClient
 from app.mcp.error_handler import MCPErrorHandler
 from app.mcp.types import MCPToolDefinition
 from app.tools.base_tool import BaseTool

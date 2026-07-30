@@ -1,0 +1,3931 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Enterprise AI Agent",
+    "description": "Enterprise LLM Application Platform — 企业级 Agent 与知识助手 REST API。\n\n- **Swagger UI**: `/docs`\n- **ReDoc**: `/redoc`\n- **OpenAPI JSON**: `/openapi.json`\n\n详细说明见仓库 `docs/API.md`。",
+    "contact": {
+      "name": "Enterprise AI Platform",
+      "url": "https://github.com/your-org/enterprise-ai-agent"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "Monitoring"
+        ],
+        "summary": "Prometheus 指标（GPU / QPS / Latency / Tokens）",
+        "description": "AI Infra 监控刮取端点。\n\n- GPU：显存、利用率\n- 服务：http_requests_total、request_duration、llm_tokens_total",
+        "operationId": "prometheus_metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Chat",
+        "operationId": "chat_api_v1_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/approvals/pending": {
+      "get": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "List Pending Approvals",
+        "operationId": "list_pending_approvals_api_v1_security_approvals_pending_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response List Pending Approvals Api V1 Security Approvals Pending Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/approvals/{approval_id}": {
+      "post": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "Resolve Approval",
+        "operationId": "resolve_approval_api_v1_security_approvals__approval_id__post",
+        "parameters": [
+          {
+            "name": "approval_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Approval Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/documents": {
+      "post": {
+        "tags": [
+          "Knowledge Assistant"
+        ],
+        "summary": "上传企业文档并建立知识库索引",
+        "operationId": "upload_document_api_v1_knowledge_documents_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_document_api_v1_knowledge_documents_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeUploadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/ask": {
+      "post": {
+        "tags": [
+          "Knowledge Assistant"
+        ],
+        "summary": "企业知识问答（Agent 检索 + LLM 生成）",
+        "operationId": "ask_knowledge_api_v1_knowledge_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeAskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeAskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/projects": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "List Projects",
+        "operationId": "list_projects_api_v1_dashboard_projects_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Create Project",
+        "operationId": "create_project_api_v1_dashboard_projects_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Project",
+        "operationId": "get_project_api_v1_dashboard_projects__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/projects/{project_id}/detail": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Project Detail",
+        "operationId": "get_project_detail_api_v1_dashboard_projects__project_id__detail_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/workflow/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Workflow",
+        "operationId": "get_workflow_api_v1_dashboard_workflow__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/agents": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "List Agents",
+        "operationId": "list_agents_api_v1_dashboard_agents_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/git/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Git",
+        "operationId": "get_git_api_v1_dashboard_git__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/deployment/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Deployment",
+        "operationId": "get_deployment_api_v1_dashboard_deployment__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/operations/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Operations",
+        "operationId": "get_operations_api_v1_dashboard_operations__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/knowledge": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Knowledge",
+        "operationId": "get_knowledge_api_v1_dashboard_knowledge_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/organization": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Organization",
+        "operationId": "get_organization_api_v1_dashboard_organization_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/settings": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Settings",
+        "operationId": "get_settings_api_v1_dashboard_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/memory/{session_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Memory",
+        "operationId": "get_memory_api_v1_dashboard_memory__session_id__get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/prompts/debug/{project_id}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Prompt Debug",
+        "operationId": "get_prompt_debug_api_v1_dashboard_prompts_debug__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Workflow",
+        "operationId": "get_workflow_workflow_get",
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Workflow Id"
+            }
+          },
+          {
+            "name": "run_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trace": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Trace",
+        "operationId": "get_trace_trace_get",
+        "parameters": [
+          {
+            "name": "trace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Trace Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraceViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Prompt",
+        "operationId": "get_prompt_prompt_get",
+        "parameters": [
+          {
+            "name": "prompt_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Prompt Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Update Prompt",
+        "operationId": "update_prompt_prompt_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePromptRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memory": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Memory",
+        "operationId": "get_memory_memory_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Tools",
+        "operationId": "get_tools_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolsViewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/status": {
+      "get": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Get Agent Status",
+        "operationId": "get_agent_status_agent_status_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/rerun": {
+      "post": {
+        "tags": [
+          "Agent Studio"
+        ],
+        "summary": "Rerun Workflow Step",
+        "operationId": "rerun_workflow_step_workflow_rerun_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerunStepRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "tags": [
+          "Model Registry"
+        ],
+        "summary": "List Models",
+        "operationId": "list_models_api_v1_models_get",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ModelVendor"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "capability",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Capability"
+            }
+          },
+          {
+            "name": "name_prefix",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name Prefix"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModelInfo"
+                  },
+                  "title": "Response List Models Api V1 Models Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Model Registry"
+        ],
+        "summary": "Register Model",
+        "operationId": "register_model_api_v1_models_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterModelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models/{name}": {
+      "get": {
+        "tags": [
+          "Model Registry"
+        ],
+        "summary": "Get Model",
+        "operationId": "get_model_api_v1_models__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models/reload": {
+      "post": {
+        "tags": [
+          "Model Registry"
+        ],
+        "summary": "Reload Registry",
+        "operationId": "reload_registry_api_v1_models_reload_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReloadRegistryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/router/route": {
+      "post": {
+        "tags": [
+          "Model Router"
+        ],
+        "summary": "Route Model",
+        "operationId": "route_model_api_v1_router_route_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inference/stats": {
+      "get": {
+        "tags": [
+          "Inference Gateway"
+        ],
+        "summary": "Inference Token Stats",
+        "operationId": "inference_token_stats_api_v1_inference_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenStatsSnapshot"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inference/chat/completions": {
+      "post": {
+        "tags": [
+          "Inference Gateway"
+        ],
+        "summary": "Chat Completions",
+        "operationId": "chat_completions_api_v1_inference_chat_completions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gpu/status": {
+      "get": {
+        "tags": [
+          "GPU Resource Manager"
+        ],
+        "summary": "Gpu Status Report",
+        "operationId": "gpu_status_report_api_v1_gpu_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GpuStatusReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gpu/status/report.md": {
+      "get": {
+        "tags": [
+          "GPU Resource Manager"
+        ],
+        "summary": "Gpu Status Report Markdown",
+        "operationId": "gpu_status_report_markdown_api_v1_gpu_status_report_md_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gpu/allocate": {
+      "post": {
+        "tags": [
+          "GPU Resource Manager"
+        ],
+        "summary": "Gpu Allocate",
+        "operationId": "gpu_allocate_api_v1_gpu_allocate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GpuAllocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GpuAllocationResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gpu/allocate/schedule": {
+      "post": {
+        "tags": [
+          "GPU Resource Manager"
+        ],
+        "summary": "Gpu Allocate Scheduled",
+        "operationId": "gpu_allocate_scheduled_api_v1_gpu_allocate_schedule_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GpuAllocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GpuAllocationResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gpu/release/{allocation_id}": {
+      "post": {
+        "tags": [
+          "GPU Resource Manager"
+        ],
+        "summary": "Gpu Release",
+        "operationId": "gpu_release_api_v1_gpu_release__allocation_id__post",
+        "parameters": [
+          {
+            "name": "allocation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Allocation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Gpu Release Api V1 Gpu Release  Allocation Id  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/providers": {
+      "get": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "List Providers",
+        "operationId": "list_providers_api_v1_service_providers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderNode"
+                  },
+                  "type": "array",
+                  "title": "Response List Providers Api V1 Service Providers Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/providers/register": {
+      "post": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "Register Provider",
+        "operationId": "register_provider_api_v1_service_providers_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderRegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderNode"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/providers/{node_id}": {
+      "delete": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "Unregister Provider",
+        "operationId": "unregister_provider_api_v1_service_providers__node_id__delete",
+        "parameters": [
+          {
+            "name": "node_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Node Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Unregister Provider Api V1 Service Providers  Node Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/heartbeat": {
+      "post": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "Provider Heartbeat",
+        "operationId": "provider_heartbeat_api_v1_service_heartbeat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeartbeatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderNode"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/health/check": {
+      "post": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "Run Health Checks",
+        "operationId": "run_health_checks_api_v1_service_health_check_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object",
+                  "title": "Response Run Health Checks Api V1 Service Health Check Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service/report": {
+      "get": {
+        "tags": [
+          "Service Discovery"
+        ],
+        "summary": "Service Discovery Report",
+        "operationId": "service_discovery_report_api_v1_service_report_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDiscoveryReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cache/stats": {
+      "get": {
+        "tags": [
+          "Model Cache"
+        ],
+        "summary": "Cache Stats",
+        "operationId": "cache_stats_api_v1_cache_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CacheStatsSnapshot"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cache/clear": {
+      "post": {
+        "tags": [
+          "Model Cache"
+        ],
+        "summary": "Clear Cache",
+        "operationId": "clear_cache_api_v1_cache_clear_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "object",
+                  "title": "Response Clear Cache Api V1 Cache Clear Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/infra/dashboard/overview": {
+      "get": {
+        "tags": [
+          "AI Infra Dashboard"
+        ],
+        "summary": "Infra Dashboard Overview",
+        "description": "聚合模型、Gateway、GPU、缓存、服务发现与 Agent 调度指标。",
+        "operationId": "infra_dashboard_overview_api_v1_infra_dashboard_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfraDashboardOverview"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/infra/dashboard/demo": {
+      "get": {
+        "tags": [
+          "AI Infra Dashboard"
+        ],
+        "summary": "Infra Dashboard Demo",
+        "description": "Dashboard Demo：浏览器打开即可轮询 overview API。",
+        "operationId": "infra_dashboard_demo_infra_dashboard_demo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentRuntimeDashboardView": {
+        "properties": {
+          "scheduler": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Scheduler"
+          },
+          "registered_agents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Registered Agents"
+          }
+        },
+        "type": "object",
+        "title": "AgentRuntimeDashboardView"
+      },
+      "AgentStatusResponse": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id",
+            "default": ""
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": ""
+          },
+          "agents": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Agents"
+          },
+          "pending_node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Node Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id"
+        ],
+        "title": "AgentStatusResponse"
+      },
+      "ApprovalActionRequest": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "approve | reject"
+          },
+          "comment": {
+            "type": "string",
+            "title": "Comment",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "ApprovalActionRequest"
+      },
+      "ApprovalResponse": {
+        "properties": {
+          "approval_id": {
+            "type": "string",
+            "title": "Approval Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "tool_name": {
+            "type": "string",
+            "title": "Tool Name"
+          },
+          "approval_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Token"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "approval_id",
+          "status",
+          "tool_name"
+        ],
+        "title": "ApprovalResponse"
+      },
+      "Body_upload_document_api_v1_knowledge_documents_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_document_api_v1_knowledge_documents_post"
+      },
+      "CacheDashboardView": {
+        "properties": {
+          "backend": {
+            "type": "string",
+            "title": "Backend",
+            "default": "memory"
+          },
+          "layers": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Layers"
+          }
+        },
+        "type": "object",
+        "title": "CacheDashboardView"
+      },
+      "CacheStatsSnapshot": {
+        "properties": {
+          "backend": {
+            "type": "string",
+            "title": "Backend",
+            "default": "memory"
+          },
+          "layers": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/LayerStats"
+            },
+            "type": "object",
+            "title": "Layers"
+          }
+        },
+        "type": "object",
+        "title": "CacheStatsSnapshot"
+      },
+      "ChatCompletionRequest": {
+        "properties": {
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessagePayload"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "max_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Tokens"
+          },
+          "stream": {
+            "type": "boolean",
+            "title": "Stream",
+            "default": false
+          },
+          "tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tools"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ChatCompletionRequest"
+      },
+      "ChatMessagePayload": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "default": ""
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "tool_call_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "ChatMessagePayload"
+      },
+      "ChatRequest": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "message"
+        ],
+        "title": "ChatRequest"
+      },
+      "ChatResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "model",
+          "answer"
+        ],
+        "title": "ChatResponse"
+      },
+      "CreateProjectRequest": {
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Requirement",
+            "description": "用户需求"
+          },
+          "project_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project Name",
+            "description": "项目名称"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "发起用户",
+            "default": "dashboard"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requirement"
+        ],
+        "title": "CreateProjectRequest"
+      },
+      "CreateProjectResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "requirement": {
+            "type": "string",
+            "title": "Requirement"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "project_id",
+          "name",
+          "requirement",
+          "status"
+        ],
+        "title": "CreateProjectResponse"
+      },
+      "FailoverEvent": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ProviderKind"
+          },
+          "from_node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Node Id"
+          },
+          "to_node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Node Id"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "title": "FailoverEvent"
+      },
+      "GatewayTokensView": {
+        "properties": {
+          "total_requests": {
+            "type": "integer",
+            "title": "Total Requests",
+            "default": 0
+          },
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens",
+            "default": 0
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens",
+            "default": 0
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens",
+            "default": 0
+          },
+          "by_backend": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Backend"
+          },
+          "by_model": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Model"
+          }
+        },
+        "type": "object",
+        "title": "GatewayTokensView"
+      },
+      "GpuAllocationRecord": {
+        "properties": {
+          "allocation_id": {
+            "type": "string",
+            "title": "Allocation Id"
+          },
+          "gpu_index": {
+            "type": "integer",
+            "title": "Gpu Index"
+          },
+          "memory_mib": {
+            "type": "number",
+            "title": "Memory Mib"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner",
+            "default": ""
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "default": ""
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "allocation_id",
+          "gpu_index",
+          "memory_mib"
+        ],
+        "title": "GpuAllocationRecord"
+      },
+      "GpuAllocationRequest": {
+        "properties": {
+          "memory_mib": {
+            "type": "number",
+            "minimum": 1.0,
+            "title": "Memory Mib",
+            "default": 4096
+          },
+          "gpu_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Gpu Count",
+            "default": 1
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner",
+            "default": ""
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "default": "inference"
+          },
+          "preferred_indices": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Preferred Indices"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "title": "GpuAllocationRequest"
+      },
+      "GpuAllocationResult": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "allocation_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allocation Ids"
+          },
+          "gpu_indices": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Gpu Indices"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "GpuAllocationResult"
+      },
+      "GpuDashboardView": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "default": 0
+          },
+          "utilization_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utilization Percent"
+          },
+          "memory_used_mib": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Used Mib"
+          },
+          "memory_total_mib": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Total Mib"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          }
+        },
+        "type": "object",
+        "title": "GpuDashboardView"
+      },
+      "GpuDeviceState": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": ""
+          },
+          "status": {
+            "$ref": "#/components/schemas/GpuDeviceStatus",
+            "default": "unknown"
+          },
+          "memory_used_mib": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Used Mib"
+          },
+          "memory_total_mib": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Total Mib"
+          },
+          "memory_free_mib": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Free Mib"
+          },
+          "utilization_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utilization Percent"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "allocated_mib": {
+            "type": "number",
+            "title": "Allocated Mib",
+            "default": 0.0
+          },
+          "allocation_count": {
+            "type": "integer",
+            "title": "Allocation Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "index"
+        ],
+        "title": "GpuDeviceState",
+        "description": "单卡实时状态。"
+      },
+      "GpuDeviceStatus": {
+        "type": "string",
+        "enum": [
+          "available",
+          "busy",
+          "offline",
+          "unknown"
+        ],
+        "title": "GpuDeviceStatus"
+      },
+      "GpuStatusReport": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "nvidia_smi_available": {
+            "type": "boolean",
+            "title": "Nvidia Smi Available",
+            "default": false
+          },
+          "device_count": {
+            "type": "integer",
+            "title": "Device Count",
+            "default": 0
+          },
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/GpuDeviceState"
+            },
+            "type": "array",
+            "title": "Devices"
+          },
+          "active_allocations": {
+            "items": {
+              "$ref": "#/components/schemas/GpuAllocationRecord"
+            },
+            "type": "array",
+            "title": "Active Allocations"
+          },
+          "summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "title": "GpuStatusReport",
+        "description": "GPU 状态报告。"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeartbeatRequest": {
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "title": "Node Id"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "node_id"
+        ],
+        "title": "HeartbeatRequest"
+      },
+      "InfraDashboardOverview": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelInfraStatus"
+            },
+            "type": "array",
+            "title": "Models"
+          },
+          "http_qps_estimate": {
+            "type": "number",
+            "title": "Http Qps Estimate",
+            "default": 0.0
+          },
+          "http_latency_avg_ms": {
+            "type": "number",
+            "title": "Http Latency Avg Ms",
+            "default": 0.0
+          },
+          "http_error_rate": {
+            "type": "number",
+            "title": "Http Error Rate",
+            "default": 0.0
+          },
+          "http_requests_total": {
+            "type": "integer",
+            "title": "Http Requests Total",
+            "default": 0
+          },
+          "gateway_tokens": {
+            "$ref": "#/components/schemas/GatewayTokensView"
+          },
+          "gpu": {
+            "items": {
+              "$ref": "#/components/schemas/GpuDashboardView"
+            },
+            "type": "array",
+            "title": "Gpu"
+          },
+          "gpu_report_summary": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Gpu Report Summary"
+          },
+          "cache": {
+            "$ref": "#/components/schemas/CacheDashboardView"
+          },
+          "service_discovery": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Service Discovery"
+          },
+          "agents": {
+            "$ref": "#/components/schemas/AgentRuntimeDashboardView"
+          }
+        },
+        "type": "object",
+        "title": "InfraDashboardOverview"
+      },
+      "KnowledgeAskRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Question"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id",
+            "default": "knowledge-demo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "KnowledgeAskRequest",
+        "description": "企业知识问答请求。"
+      },
+      "KnowledgeAskResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "default": ""
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeSourceItem"
+            },
+            "type": "array",
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "answer"
+        ],
+        "title": "KnowledgeAskResponse",
+        "description": "Agent + RAG 问答结果。"
+      },
+      "KnowledgeSourceItem": {
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "title": "Document Id"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "document_id",
+          "content",
+          "score"
+        ],
+        "title": "KnowledgeSourceItem",
+        "description": "检索到的知识片段。"
+      },
+      "KnowledgeUploadResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "chunks_ingested": {
+            "type": "integer",
+            "title": "Chunks Ingested"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "file_name",
+          "chunks_ingested"
+        ],
+        "title": "KnowledgeUploadResponse",
+        "description": "文档上传并入库结果。"
+      },
+      "LayerStats": {
+        "properties": {
+          "hits": {
+            "type": "integer",
+            "title": "Hits",
+            "default": 0
+          },
+          "misses": {
+            "type": "integer",
+            "title": "Misses",
+            "default": 0
+          },
+          "sets": {
+            "type": "integer",
+            "title": "Sets",
+            "default": 0
+          },
+          "evictions": {
+            "type": "integer",
+            "title": "Evictions",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "LayerStats"
+      },
+      "MemoryViewResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id",
+            "default": ""
+          },
+          "conversation": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Conversation"
+          },
+          "project_memory": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Project Memory"
+          },
+          "shared": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Shared"
+          },
+          "knowledge": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Knowledge"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id"
+        ],
+        "title": "MemoryViewResponse"
+      },
+      "ModelCost": {
+        "properties": {
+          "input_per_1m": {
+            "type": "number",
+            "title": "Input Per 1M",
+            "default": 0.0
+          },
+          "output_per_1m": {
+            "type": "number",
+            "title": "Output Per 1M",
+            "default": 0.0
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "default": "USD"
+          }
+        },
+        "type": "object",
+        "title": "ModelCost",
+        "description": "推理成本（每百万 token，便于路由与计费展示）。"
+      },
+      "ModelInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ModelVendor"
+          },
+          "context_length": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Context Length"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Max Tokens"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/ModelCost"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Capabilities"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aliases"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "model_id",
+          "provider",
+          "context_length",
+          "max_tokens"
+        ],
+        "title": "ModelInfo",
+        "description": "注册表中的模型元数据。\n\n``name`` 为注册表主键；``model_id`` 为调用推理 API 时使用的模型标识。"
+      },
+      "ModelInfraStatus": {
+        "properties": {
+          "registry_name": {
+            "type": "string",
+            "title": "Registry Name"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "registered"
+          },
+          "qps": {
+            "type": "number",
+            "title": "Qps",
+            "default": 0.0
+          },
+          "latency_avg_ms": {
+            "type": "number",
+            "title": "Latency Avg Ms",
+            "default": 0.0
+          },
+          "tokens_prompt": {
+            "type": "integer",
+            "title": "Tokens Prompt",
+            "default": 0
+          },
+          "tokens_completion": {
+            "type": "integer",
+            "title": "Tokens Completion",
+            "default": 0
+          },
+          "requests_total": {
+            "type": "integer",
+            "title": "Requests Total",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "registry_name",
+          "model_id",
+          "provider"
+        ],
+        "title": "ModelInfraStatus"
+      },
+      "ModelVendor": {
+        "type": "string",
+        "enum": [
+          "openai",
+          "qwen",
+          "deepseek",
+          "llama"
+        ],
+        "title": "ModelVendor",
+        "description": "模型厂商 / 系列。"
+      },
+      "PromptViewResponse": {
+        "properties": {
+          "prompt_id": {
+            "type": "string",
+            "title": "Prompt Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "default": ""
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "default": ""
+          },
+          "variables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Variables"
+          },
+          "overridden": {
+            "type": "boolean",
+            "title": "Overridden",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt_id",
+          "version"
+        ],
+        "title": "PromptViewResponse"
+      },
+      "ProviderHealth": {
+        "type": "string",
+        "enum": [
+          "healthy",
+          "unhealthy",
+          "unknown",
+          "stale"
+        ],
+        "title": "ProviderHealth"
+      },
+      "ProviderKind": {
+        "type": "string",
+        "enum": [
+          "vllm",
+          "sglang"
+        ],
+        "title": "ProviderKind"
+      },
+      "ProviderNode": {
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "title": "Node Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProviderKind"
+          },
+          "base_url": {
+            "type": "string",
+            "title": "Base Url"
+          },
+          "api_key": {
+            "type": "string",
+            "title": "Api Key",
+            "default": "EMPTY"
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Weight",
+            "default": 100
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProviderHealth",
+            "default": "unknown"
+          },
+          "last_heartbeat_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Heartbeat At"
+          },
+          "last_health_check_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Health Check At"
+          },
+          "last_error": {
+            "type": "string",
+            "title": "Last Error",
+            "default": ""
+          },
+          "failure_count": {
+            "type": "integer",
+            "title": "Failure Count",
+            "default": 0
+          },
+          "success_count": {
+            "type": "integer",
+            "title": "Success Count",
+            "default": 0
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "node_id",
+          "kind",
+          "base_url"
+        ],
+        "title": "ProviderNode",
+        "description": "推理节点注册信息。"
+      },
+      "ProviderRegisterRequest": {
+        "properties": {
+          "node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProviderKind"
+          },
+          "base_url": {
+            "type": "string",
+            "title": "Base Url"
+          },
+          "api_key": {
+            "type": "string",
+            "title": "Api Key",
+            "default": "EMPTY"
+          },
+          "weight": {
+            "type": "integer",
+            "title": "Weight",
+            "default": 100
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "base_url"
+        ],
+        "title": "ProviderRegisterRequest"
+      },
+      "RegisterModelRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ModelVendor"
+          },
+          "context_length": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Context Length"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Max Tokens"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/ModelCost"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Capabilities"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aliases"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          },
+          "overwrite": {
+            "type": "boolean",
+            "title": "Overwrite",
+            "description": "若 name 已存在是否覆盖",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "model_id",
+          "provider",
+          "context_length",
+          "max_tokens"
+        ],
+        "title": "RegisterModelRequest",
+        "description": "与 ModelInfo 相同，用于 POST 注册。"
+      },
+      "ReloadRegistryResponse": {
+        "properties": {
+          "loaded": {
+            "type": "integer",
+            "title": "Loaded"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loaded",
+          "path"
+        ],
+        "title": "ReloadRegistryResponse"
+      },
+      "RerunStepRequest": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "node_id": {
+            "type": "string",
+            "title": "Node Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "node_id"
+        ],
+        "title": "RerunStepRequest"
+      },
+      "RouteRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": ""
+          },
+          "task": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TaskKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prefer_low_cost": {
+            "type": "boolean",
+            "title": "Prefer Low Cost",
+            "default": false
+          },
+          "prefer_low_latency": {
+            "type": "boolean",
+            "title": "Prefer Low Latency",
+            "default": false
+          },
+          "max_cost_per_1m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Cost Per 1M"
+          },
+          "min_context_length": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Context Length"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "title": "RouteRequest"
+      },
+      "RoutingReport": {
+        "properties": {
+          "task_type": {
+            "$ref": "#/components/schemas/TaskKind"
+          },
+          "policy_name": {
+            "type": "string",
+            "title": "Policy Name"
+          },
+          "selected_model": {
+            "$ref": "#/components/schemas/ModelInfo"
+          },
+          "selected_registry_name": {
+            "type": "string",
+            "title": "Selected Registry Name"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "prompt_signals": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt Signals"
+          },
+          "cost_weight": {
+            "type": "number",
+            "title": "Cost Weight",
+            "default": 0.0
+          },
+          "latency_weight": {
+            "type": "number",
+            "title": "Latency Weight",
+            "default": 0.0
+          },
+          "preference_weight": {
+            "type": "number",
+            "title": "Preference Weight",
+            "default": 0.0
+          },
+          "winner": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScoredCandidate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/ScoredCandidate"
+            },
+            "type": "array",
+            "title": "Candidates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_type",
+          "policy_name",
+          "selected_model",
+          "selected_registry_name"
+        ],
+        "title": "RoutingReport",
+        "description": "路由决策报告（可写入 Trace / 日志 / API 响应）。"
+      },
+      "ScoredCandidate": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "cost_score": {
+            "type": "number",
+            "title": "Cost Score"
+          },
+          "latency_score": {
+            "type": "number",
+            "title": "Latency Score"
+          },
+          "preference_score": {
+            "type": "number",
+            "title": "Preference Score"
+          },
+          "composite_score": {
+            "type": "number",
+            "title": "Composite Score"
+          },
+          "estimated_latency_ms": {
+            "type": "number",
+            "title": "Estimated Latency Ms"
+          },
+          "blended_cost_per_1m": {
+            "type": "number",
+            "title": "Blended Cost Per 1M"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_name",
+          "model_id",
+          "cost_score",
+          "latency_score",
+          "preference_score",
+          "composite_score",
+          "estimated_latency_ms",
+          "blended_cost_per_1m"
+        ],
+        "title": "ScoredCandidate",
+        "description": "候选模型得分明细。"
+      },
+      "ServiceDiscoveryReport": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderNode"
+            },
+            "type": "array",
+            "title": "Providers"
+          },
+          "active_by_kind": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Active By Kind"
+          },
+          "recent_failovers": {
+            "items": {
+              "$ref": "#/components/schemas/FailoverEvent"
+            },
+            "type": "array",
+            "title": "Recent Failovers"
+          }
+        },
+        "type": "object",
+        "title": "ServiceDiscoveryReport"
+      },
+      "TaskKind": {
+        "type": "string",
+        "enum": [
+          "chat",
+          "code",
+          "math",
+          "long_context"
+        ],
+        "title": "TaskKind",
+        "description": "路由任务类型。"
+      },
+      "TokenStatsSnapshot": {
+        "properties": {
+          "total_requests": {
+            "type": "integer",
+            "title": "Total Requests",
+            "default": 0
+          },
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens",
+            "default": 0
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens",
+            "default": 0
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens",
+            "default": 0
+          },
+          "by_backend": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Backend"
+          },
+          "by_model": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Model"
+          }
+        },
+        "type": "object",
+        "title": "TokenStatsSnapshot"
+      },
+      "ToolViewItem": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "tool_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Tool Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ToolViewItem"
+      },
+      "ToolsViewResponse": {
+        "properties": {
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/ToolViewItem"
+            },
+            "type": "array",
+            "title": "Tools"
+          }
+        },
+        "type": "object",
+        "title": "ToolsViewResponse"
+      },
+      "TraceViewResponse": {
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "title": "Trace Id"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id",
+            "default": ""
+          },
+          "duration_sec": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Sec"
+          },
+          "timeline": {
+            "type": "string",
+            "title": "Timeline",
+            "default": ""
+          },
+          "events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metrics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trace_id"
+        ],
+        "title": "TraceViewResponse"
+      },
+      "UpdatePromptRequest": {
+        "properties": {
+          "prompt_id": {
+            "type": "string",
+            "title": "Prompt Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "1.0.0"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt_id",
+          "content"
+        ],
+        "title": "UpdatePromptRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkflowViewResponse": {
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": ""
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "nodes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Nodes"
+          },
+          "edges": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Edges"
+          },
+          "node_results": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Node Results"
+          },
+          "pending_node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Node Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowViewResponse"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "存活探针与基础信息。"
+    },
+    {
+      "name": "Monitoring",
+      "description": "Prometheus 指标（Task 4.5）。"
+    },
+    {
+      "name": "Chat",
+      "description": "对话 Agent API，经 ChatService → AgentRuntime。"
+    },
+    {
+      "name": "Knowledge Assistant",
+      "description": "企业知识库上传与 RAG 问答（Task 3.8）。"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Software Team Dashboard 后端 API。"
+    },
+    {
+      "name": "Agent Studio",
+      "description": "Agent 开发调试：Workflow / Prompt / Memory / Trace（Task 6.8）。"
+    },
+    {
+      "name": "AI Infra Dashboard",
+      "description": "模型 / GPU / 缓存 / Agent 基础设施监控（Task 7.8）。"
+    }
+  ]
+}

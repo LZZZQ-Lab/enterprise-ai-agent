@@ -82,6 +82,7 @@ class TracePlayer:
             return (
                 f"[{index}] LLM model={event.model} "
                 f"duration={event.duration_ms:.1f}ms "
+                f"tokens={event.prompt_tokens}+{event.completion_tokens} "
                 f"tool_calls={event.tool_call_count} "
                 f"preview={event.content_preview[:80]!r}"
             )

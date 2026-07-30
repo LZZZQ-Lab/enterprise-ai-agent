@@ -1,0 +1,23 @@
+### 企业知识助手 — 本地 Demo（需先启动 backend API）
+
+@baseUrl = http://localhost:8001
+
+### 1. 上传文档
+POST {{baseUrl}}/api/v1/knowledge/documents
+Content-Type: multipart/form-data; boundary=Boundary
+
+--Boundary
+Content-Disposition: form-data; name="file"; filename="platform_intro.md"
+Content-Type: text/markdown
+
+< ./sample_docs/platform_intro.md
+--Boundary--
+
+### 2. 知识问答
+POST {{baseUrl}}/api/v1/knowledge/ask
+Content-Type: application/json
+
+{
+  "session_id": "demo-http",
+  "question": "Agent 如何检索企业知识？"
+}

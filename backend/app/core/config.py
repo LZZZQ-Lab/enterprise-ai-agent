@@ -1,42 +1,15 @@
-from functools import lru_cache
+"""
+兼容层：请改用 app.config.settings。
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+Task 1.1 起，Settings 已迁移至 app.config.settings。
+"""
 
+from app.config.settings import Settings
+from app.config.settings import get_settings
+from app.config.settings import settings
 
-class Settings(BaseSettings):
-
-    APP_NAME: str
-
-    APP_VERSION: str
-
-    DEBUG: bool
-
-    HOST: str
-
-    PORT: int
-
-    OPENAI_API_KEY: str
-
-    OPENAI_BASE_URL: str
-
-    MODEL_NAME: str
-
-    TEMPERATURE: float
-
-    MAX_TOKENS: int
-
-    LOG_LEVEL: str
-
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        extra="ignore"
-    )
-
-
-@lru_cache
-def get_settings():
-
-    return Settings()
-
-
-settings = get_settings()
+__all__ = [
+    "Settings",
+    "get_settings",
+    "settings",
+]

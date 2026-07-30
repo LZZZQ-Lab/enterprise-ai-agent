@@ -1,0 +1,30 @@
+{
+  "experiment_name": "qwen25_qlora_enterprise",
+  "training_data_path": "data/finetune_demo/enterprise_sft.jsonl",
+  "model_path": "Qwen/Qwen2.5-0.5B-Instruct",
+  "output_dir": "artifacts/finetune/qwen25_qlora",
+  "batch_size": 1,
+  "learning_rate": 2e-4,
+  "max_steps": 100,
+  "max_seq_length": 512,
+  "gradient_accumulation_steps": 4,
+  "eval_ratio": 0.15,
+  "logging_steps": 5,
+  "save_steps": 50,
+  "seed": 42,
+  "lora": {
+    "r": 8,
+    "alpha": 16,
+    "dropout": 0.05,
+    "load_in_4bit": true,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  }
+}

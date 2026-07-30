@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
@@ -30,4 +32,49 @@ class ScoredDocument:
     document: Document
 
     score: float
+
+
+@dataclass
+class SourceDocument:
+    """
+    RAG 问答返回的引用来源。
+    """
+
+    document_id: str
+
+    content: str
+
+    score: float
+
+    metadata: dict[str, Any] = field(
+        default_factory=dict
+    )
+
+    @classmethod
+    def from_scored(
+        cls,
+        scored: ScoredDocument,
+    ) -> SourceDocument:
+
+        return cls(
+            document_id=scored.document.id,
+            content=scored.document.content,
+            score=scored.score,
+            metadata=dict(scored.document.metadata),
+        )
+
+
+@dataclass
+class RAGAnswer:
+    """
+    RAG Pipeline 问答结果：答案 + 来源文档。
+    """
+
+    question: str
+
+    answer: str
+
+    sources: list[SourceDocument] = field(
+        default_factory=list
+    )
 

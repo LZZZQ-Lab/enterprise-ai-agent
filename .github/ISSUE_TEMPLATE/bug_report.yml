@@ -1,0 +1,78 @@
+name: Bug 报告
+description: 报告缺陷、回归或文档错误
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交 Bug 报告。请先搜索 [已有 Issues](https://github.com/LZZZQ-Lab/enterprise-ai-agent/issues)，并尝试最新 `main` 分支复现。
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 影响区域
+      options:
+        - Agent Runtime / Tool Calling
+        - RAG / Knowledge
+        - LLM Provider / vLLM / Gateway
+        - Workflow
+        - AI Software Team
+        - API / Dashboard
+        - Docker / K8s 部署
+        - CI / 测试
+        - 文档
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 清晰描述发生了什么、期望行为是什么
+      placeholder: 调用 POST /api/v1/chat 时返回 500...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 最小可复现步骤；Mock Demo 请注明脚本名
+      placeholder: |
+        1. cd backend && pip install -r requirements.txt
+        2. python examples/demo_03_agent.py
+        3. 观察到 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境信息
+      description: OS、Python 版本、是否 GPU/Docker、MODEL_PROVIDER
+      placeholder: |
+        - OS: Windows 11 / Ubuntu 22.04
+        - Python: 3.11.x
+        - MODEL_PROVIDER: openai / vllm / mock
+        - Commit: abc1234
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 堆栈
+      description: 相关报错、pytest 输出或 API 响应（请脱敏 API Key）
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已在 [Unreleased] 版本或 main 上复现
+          required: true
+        - label: 我已移除日志中的密钥与敏感信息
+          required: true

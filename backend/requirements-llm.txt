@@ -1,0 +1,31 @@
+# Enterprise LLM Application Platform — 本地大模型依赖
+#
+# Task 2.1：为 Qwen 等本地模型推理准备环境。
+#
+# ── 安装顺序 ──────────────────────────────────────────────
+#
+# 1) 先安装 PyTorch（按平台选择 CPU / CUDA 版本）：
+#
+#    # GPU（CUDA 12.x，推荐有 NVIDIA 显卡时使用）
+#    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+#
+#    # CPU only
+#    pip install torch torchvision torchaudio
+#
+# 2) 再安装本文件其余依赖：
+#
+#    pip install -r requirements-llm.txt
+#
+# ── 验证 ──────────────────────────────────────────────────
+#
+#    python scripts/check_gpu.py
+#
+# ── 说明 ──────────────────────────────────────────────────
+#
+# torch 需单独安装以匹配 CUDA 版本，见 https://pytorch.org/get-started/locally/
+
+torch>=2.1.0
+transformers>=4.40.0
+accelerate>=0.30.0
+sentencepiece>=0.2.0
+safetensors>=0.4.0

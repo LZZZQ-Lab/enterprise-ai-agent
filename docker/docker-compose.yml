@@ -1,0 +1,10 @@
+# 兼容入口（Task 9.1）
+#
+# Docker Compose 已迁移至 infra/docker/。
+# 本目录保留旧路径，便于现有脚本与文档继续工作。
+#
+# 推荐：
+#   docker compose -f infra/docker/docker-compose.yml up --build
+
+include:
+  - path: ../infra/docker/docker-compose.yml

@@ -1,0 +1,78 @@
+{
+  "task": "4.4",
+  "kind": "vllm_concurrency",
+  "profile": "optimized",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_url": "http://127.0.0.1:8000/v1",
+  "max_tokens": 128,
+  "prompt": "请用三句话介绍企业级 AI 助手平台可以做什么。",
+  "created_at": "2026-07-27T14:44:44+08:00",
+  "server_profile": {
+    "label": "optimized",
+    "description": "Task 4.4：提高 GPU 利用率、批处理与 KV prefix cache",
+    "max_model_len": 512,
+    "gpu_memory_utilization": 0.82,
+    "max_num_seqs": 32,
+    "max_num_batched_tokens": 4096,
+    "swap_space_gb": 2,
+    "enable_prefix_caching": true,
+    "enforce_eager": false,
+    "client_max_tokens": 128
+  },
+  "levels": [
+    {
+      "profile": "optimized",
+      "concurrency": 1,
+      "total_requests": 10,
+      "wall_time_sec": 18.588416000000002,
+      "ttft_ms_p50": 58.2912,
+      "ttft_ms_p95": 68.816,
+      "latency_ms_p50": 2266.88,
+      "latency_ms_p95": 2752.6400000000003,
+      "requests_per_sec": 0.5379694536640454,
+      "tokens_per_sec": 56.43299568935836,
+      "completion_tokens_total": 1049,
+      "gpu_memory_mb": {
+        "used_mib": 2855.0,
+        "total_mib": 4096.0
+      },
+      "notes": "mock data; run without --mock for measured results"
+    },
+    {
+      "profile": "optimized",
+      "concurrency": 10,
+      "total_requests": 10,
+      "wall_time_sec": 2.0595964928000003,
+      "ttft_ms_p50": 64.5866496,
+      "ttft_ms_p95": 76.248128,
+      "latency_ms_p50": 2511.7030400000003,
+      "latency_ms_p95": 3049.9251200000003,
+      "requests_per_sec": 4.855319978917376,
+      "tokens_per_sec": 509.32306578843276,
+      "completion_tokens_total": 1049,
+      "gpu_memory_mb": {
+        "used_mib": 2855.0,
+        "total_mib": 4096.0
+      },
+      "notes": "mock data; run without --mock for measured results"
+    },
+    {
+      "profile": "optimized",
+      "concurrency": 50,
+      "total_requests": 50,
+      "wall_time_sec": 2.9518404607999997,
+      "ttft_ms_p50": 92.5664256,
+      "ttft_ms_p95": 109.279808,
+      "latency_ms_p50": 3599.80544,
+      "latency_ms_p95": 4371.19232,
+      "requests_per_sec": 16.938584813099666,
+      "tokens_per_sec": 1777.8738619829412,
+      "completion_tokens_total": 5248,
+      "gpu_memory_mb": {
+        "used_mib": 2855.0,
+        "total_mib": 4096.0
+      },
+      "notes": "mock data; run without --mock for measured results"
+    }
+  ]
+}

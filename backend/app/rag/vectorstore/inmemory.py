@@ -2,7 +2,7 @@ import math
 
 from app.rag.types import Document
 from app.rag.types import ScoredDocument
-from app.rag.vectorstore.base import VectorStore
+from app.vectorstore.base import BaseVectorStore as VectorStore
 
 
 class InMemoryVectorStore(VectorStore):

@@ -1,0 +1,73 @@
+# Phase 3 知识助手 / Swagger 一键 Demo（仅 FastAPI，不启动 vLLM）
+#
+# 适用：本地无 GPU、或 vLLM 已在宿主机 8000 运行时。
+#
+# 仓库根目录：
+#   docker compose -f infra/docker/docker-compose.api-only.yml up --build
+# 兼容旧路径：docker compose -f docker/docker-compose.api-only.yml up --build
+#
+# PyPI 超时（Read timed out）时可指定镜像：
+#   $env:PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+#   或阿里云：https://mirrors.aliyun.com/pypi/simple/
+#
+# Swagger：http://localhost:8001/docs
+# Infra Dashboard Demo：http://localhost:8001/infra/dashboard/demo
+# Overview API：GET /api/v1/infra/dashboard/overview
+#
+# 与 WSL 内 vLLM 联调 Chat：Docker 容器默认无法访问 WSL 的 192.168.x.x:8000。
+# 方案 1（推荐联调）：API 用 WSL uvicorn（8001），vLLM 用 WSL（8000）
+# 方案 2（Docker + vLLM）：Windows .wslconfig 启用 networkingMode=mirrored 后重建 WSL
+# 方案 3（仅验证 Dashboard/Swagger）：本 compose 即可，Chat 需云端 API 或后续打通网络
+#
+# DeepSeek 官方 API：编辑 backend/.env（或仓库根 .env），勿提交 Git：
+#   MODEL_PROVIDER=openai
+#   API_KEY=sk-你的DeepSeek密钥
+#   OPENAI_BASE_URL=https://api.deepseek.com/v1
+#   MODEL_NAME=deepseek-chat
+# 然后：docker compose -f infra/docker/docker-compose.api-only.yml up -d --force-recreate
+
+name: enterprise-ai-agent-api
+
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}
+    container_name: enterprise-ai-backend-api-only
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${BACKEND_HOST_PORT:-8001}:8001"
+    # LLM 等从 backend/.env 注入（勿与下方 environment 中空 ${API_KEY:-} 混用，会覆盖密钥）
+    env_file:
+      - path: ../../backend/.env
+        required: false
+      - path: ../../.env
+        required: false
+    environment:
+      APP_NAME: ${APP_NAME:-Enterprise AI Agent}
+      DEBUG: ${DEBUG:-true}
+      HOST: 0.0.0.0
+      PORT: "8001"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-fake}
+      VECTOR_STORE_PROVIDER: ${VECTOR_STORE_PROVIDER:-memory}
+      ENABLE_KNOWLEDGE_TOOL: "true"
+      KNOWLEDGE_UPLOAD_DIR: /app/data/knowledge_uploads
+      ENABLE_INFRA_METRICS: "true"
+      ENABLE_SERVICE_DISCOVERY: "false"
+      # 容器访问 WSL 内 vLLM：使用 WSL IP（与 backend/.env 中 VLLM_ENDPOINT 一致）
+      # 若 Chat 连不上 vLLM，可改为 network_mode: host（仅 Linux/WSL 原生 Docker）
+    volumes:
+      - backend-knowledge:/app/data/knowledge_uploads
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  backend-knowledge:

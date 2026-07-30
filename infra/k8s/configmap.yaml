@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: enterprise-ai-config
+  namespace: enterprise-ai
+  labels:
+    app.kubernetes.io/name: enterprise-ai-config
+data:
+  APP_NAME: "Enterprise AI Agent"
+  DEBUG: "false"
+  HOST: "0.0.0.0"
+  PORT: "8001"
+  LOG_LEVEL: "INFO"
+  MODEL_PROVIDER: "vllm"
+  MODEL_NAME: "Qwen/Qwen2.5-0.5B-Instruct"
+  TEMPERATURE: "0.7"
+  MAX_TOKENS: "4096"
+  MAX_AGENT_LOOP: "5"
+  VLLM_ENDPOINT: "http://vllm:8000/v1"
+  VLLM_MAX_TOKENS: "256"
+  VLLM_NODES: "http://vllm:8000/v1"
+  VECTOR_STORE_PROVIDER: "chroma"
+  CHROMA_HOST: "chroma"
+  CHROMA_PORT: "8000"
+  CHROMA_COLLECTION: "enterprise_kb"
+  EMBEDDING_PROVIDER: "fake"
+  ENABLE_KNOWLEDGE_TOOL: "true"
+  ENABLE_INFRA_METRICS: "true"
+  ENABLE_STRUCTURED_LOGGING: "true"
+  ENABLE_AGENT_TRACE: "false"
+  ENABLE_INFERENCE_GATEWAY: "true"
+  ENABLE_SERVICE_DISCOVERY: "true"
+  ENABLE_MODEL_CACHE: "true"
+  CACHE_BACKEND: "redis"
+  KNOWLEDGE_UPLOAD_DIR: "/app/data/knowledge_uploads"
+  TRACE_EXPORT_DIR: "/app/data/agent_traces"
+  REDIS_URL: "redis://redis:6379/0"
+  HF_ENDPOINT: "https://hf-mirror.com"

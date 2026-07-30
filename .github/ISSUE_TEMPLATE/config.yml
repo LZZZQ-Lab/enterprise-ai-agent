@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 文档与架构
+    url: https://github.com/LZZZQ-Lab/enterprise-ai-agent/blob/main/docs/architecture.md
+    about: 系统架构、模块划分与部署说明
+  - name: Demo 体系
+    url: https://github.com/LZZZQ-Lab/enterprise-ai-agent/blob/main/examples/README.md
+    about: 离线 Mock Demo，无需 API Key / GPU
+  - name: 讨论与提问
+    url: https://github.com/LZZZQ-Lab/enterprise-ai-agent/discussions
+    about: 使用问题、设计讨论（若已启用 Discussions）

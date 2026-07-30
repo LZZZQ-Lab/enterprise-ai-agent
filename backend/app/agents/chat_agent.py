@@ -1,4 +1,4 @@
-from app.agents.base_agent import BaseAgent
+from app.agents.base import BaseAgent
 from app.agents.types import AgentContext
 from app.agents.types import AgentResult
 
@@ -6,7 +6,7 @@ from app.llm.factory import get_llm_client
 
 from app.memory.exceptions import MemoryError
 
-from app.mcp.client.local import LocalMCPClient
+from app.mcp.client import create_mcp_client
 from app.mcp.server_manager import MCPServerManager
 
 from app.observability.collector import TraceCollector
@@ -17,20 +17,20 @@ from app.observability.metrics import MetricsCollector
 from app.observability.player import TracePlayer
 
 from app.multi_agent.agent import Agent
-from app.runtime.agent_executor import AgentExecutor
-from app.runtime.config import AgentConfig
-from app.runtime.error_handler import AgentErrorHandler
-from app.runtime.observation_builder import ObservationBuilder
-from app.runtime.plan.error_handler import WorkflowErrorHandler
-from app.runtime.plan.llm_planner import LLMPlanner
-from app.runtime.plan.planner import NoPlanner
-from app.runtime.plan.planner import Planner
-from app.runtime.plan.step_executor import StepExecutor
-from app.runtime.plan.workflow import SequentialWorkflow
-from app.runtime.plan.workflow_executor import WorkflowExecutor
-from app.runtime.prompt_builder import PromptBuilder
-from app.runtime.tool_message_builder import ToolMessageBuilder
-from app.runtime.tracer import AgentTracer
+from app.agents.executor.agent_executor import AgentExecutor
+from app.config import AgentConfig
+from app.agents.executor.error_handler import AgentErrorHandler
+from app.agents.executor.observation_builder import ObservationBuilder
+from app.agents.executor.plan.error_handler import WorkflowErrorHandler
+from app.agents.executor.plan.llm_planner import LLMPlanner
+from app.agents.executor.plan.planner import NoPlanner
+from app.agents.executor.plan.planner import Planner
+from app.agents.executor.plan.step_executor import StepExecutor
+from app.agents.executor.plan.workflow import SequentialWorkflow
+from app.agents.executor.plan.workflow_executor import WorkflowExecutor
+from app.prompts.builder import PromptBuilder
+from app.agents.executor.tool_message_builder import ToolMessageBuilder
+from app.agents.executor.tracer import AgentTracer
 
 from app.tools.manager import ToolManager
 
@@ -67,7 +67,7 @@ class ChatAgent(BaseAgent, Agent):
 
         super().__init__()
 
-        self.config = config or AgentConfig()
+        self.config = config or AgentConfig.from_env()
 
         self.metrics_collector = self._setup_metrics(
             metrics_collector,
@@ -127,6 +127,7 @@ class ChatAgent(BaseAgent, Agent):
             or PromptBuilder(
                 config=self.config,
                 retriever=retriever,
+                tool_manager=self.tool_manager,
                 mcp_resource_provider=mcp_resource_provider,
                 mcp_prompt_provider=mcp_prompt_provider,
                 tracer=self.tracer,
@@ -288,8 +289,8 @@ class ChatAgent(BaseAgent, Agent):
 
             for server_name in server_names:
 
-                client = LocalMCPClient(
-                    server_name=server_name,
+                client = create_mcp_client(
+                    server_name,
                 )
 
                 manager.register_server(client)
@@ -311,15 +312,30 @@ class ChatAgent(BaseAgent, Agent):
             and self.config.enable_trace
         ):
 
-            self.trace_collector.start_trace(
-                session_id=context.session_id,
-                metadata={
-                    "user_message": context.user_message,
-                    "enable_planner": self.config.enable_planner,
-                    "enable_rag": self.config.enable_rag,
-                    "enable_mcp": self.config.enable_mcp,
-                },
-            )
+            from app.logging.context import get_request_id
+            from app.logging.context import set_session_id
+            from app.observability.trace import get_active_trace_collector
+
+            set_session_id(context.session_id)
+
+            if get_active_trace_collector() is None:
+
+                self.trace_collector.start_trace(
+                    session_id=context.session_id,
+                    metadata={
+                        "request_id": get_request_id() or "",
+                        "user_message": context.user_message,
+                        "enable_planner": self.config.enable_planner,
+                        "enable_rag": self.config.enable_rag,
+                        "enable_mcp": self.config.enable_mcp,
+                    },
+                )
+
+                self._trace_started_here = True
+            else:
+                self._trace_started_here = False
+        else:
+            self._trace_started_here = False
 
         try:
 
@@ -359,6 +375,7 @@ class ChatAgent(BaseAgent, Agent):
         if (
             self.trace_collector is not None
             and self.config.enable_trace
+            and getattr(self, "_trace_started_here", False)
         ):
 
             self.last_trace = (

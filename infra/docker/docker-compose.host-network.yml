@@ -1,0 +1,12 @@
+# 可选：WSL/Linux 原生 Docker 下让 API 与 vLLM 共享宿主机网络
+# 用法（需先 docker compose down）：
+#   docker compose -f infra/docker/docker-compose.api-only.yml -f infra/docker/docker-compose.host-network.yml up -d --build
+#
+# Docker Desktop (Windows) 可能不支持 network_mode: host；此时请继续用 WSL uvicorn 联调 vLLM。
+
+name: enterprise-ai-agent-api
+
+services:
+  backend:
+    network_mode: host
+    ports: []

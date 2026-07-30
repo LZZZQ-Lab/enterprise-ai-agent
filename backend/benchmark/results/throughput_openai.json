@@ -1,0 +1,21 @@
+{
+  "task": "8.3",
+  "kind": "multi_request",
+  "mode": "throughput",
+  "timestamp": "2026-07-30T18:41:01+08:00",
+  "backend": "openai",
+  "model": "gpt-4o-mini",
+  "concurrent_requests": 2,
+  "total_requests": 8,
+  "wall_time_sec": 38.0,
+  "total_completion_tokens": 408,
+  "requests_per_sec": 0.21052631578947367,
+  "tokens_per_sec": 10.736842105263158,
+  "gpu_memory_mb": {
+    "used_mib": 3055.0,
+    "total_mib": 4096.0,
+    "allocated_mib": null,
+    "reserved_mib": null
+  },
+  "notes": "mock data; run without --mock for measured results"
+}

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from app.core.logger import logger
 from app.mcp.adapter.tool_adapter import MCPToolAdapter
-from app.mcp.client.base import MCPClient
+from app.mcp.clients.base import MCPClient
 from app.mcp.error_handler import MCPErrorHandler
 from app.mcp.exceptions import MCPConnectionError
 from app.mcp.prompt_provider import MCPPromptProvider

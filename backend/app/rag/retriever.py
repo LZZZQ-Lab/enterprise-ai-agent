@@ -47,7 +47,7 @@ class Retriever:
         检索与 query 最相关的文档。
         """
 
-        query_vector = self._embedding_provider.embed(
+        query_vector = self._embedding_provider.embed_one(
             query
         )
 

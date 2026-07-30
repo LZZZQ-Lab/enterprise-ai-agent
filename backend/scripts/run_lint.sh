@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Task 8.5：Ruff lint（CI 门禁）
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${BACKEND_ROOT}"
+
+echo "==> ruff check"
+python -m ruff check app tests benchmark loadtest scripts "$@"
+
+echo "Lint OK"

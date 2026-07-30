@@ -15,6 +15,8 @@ class TraceEventType(str, Enum):
     PLANNER = "planner"
     WORKFLOW = "workflow"
     MULTI_AGENT = "multi_agent"
+    AGENT = "agent"
+    GPU = "gpu"
 
 
 def _new_event_id() -> str:
@@ -70,6 +72,14 @@ class LLMEvent(TraceEvent):
     tool_call_count: int = 0
 
     duration_ms: float = 0.0
+
+    ttft_ms: float | None = None
+
+    tokens_per_second: float | None = None
+
+    prompt_tokens: int = 0
+
+    completion_tokens: int = 0
 
     error: str | None = None
 
@@ -237,6 +247,50 @@ class MultiAgentEvent(TraceEvent):
     success: bool = True
 
     content_preview: str = ""
+
+
+@dataclass
+class AgentSpanEvent(TraceEvent):
+    """
+    Agent 执行跨度（Runtime 自动记录）。
+    """
+
+    agent_name: str = ""
+
+    phase: str = ""
+
+    prompt: str = ""
+
+    response: str = ""
+
+    prompt_tokens: int = 0
+
+    completion_tokens: int = 0
+
+    total_tokens: int = 0
+
+    duration_ms: float = 0.0
+
+    success: bool = True
+
+    tool_call_count: int = 0
+
+
+@dataclass
+class GPUMetricsEvent(TraceEvent):
+    """
+    GPU 显存与利用率快照。
+    """
+
+    memory_used_mib: float | None = None
+
+    memory_total_mib: float | None = None
+
+    utilization_percent: float | None = None
+
+    gpu_index: int = 0
+
+    phase: str = ""
 
 
 @dataclass

@@ -122,6 +122,18 @@ def create_trace_exporter(
     exporter_type: str,
 ) -> TraceExporter:
 
+    from app.config.settings import get_settings
+
+    settings = get_settings()
+
+    if exporter_type == "structured":
+
+        from app.logging.trace_exporter import StructuredTraceExporter
+
+        return StructuredTraceExporter(
+            output_dir=settings.TRACE_EXPORT_DIR,
+        )
+
     exporters = {
         "console": ConsoleTraceExporter,
         "json": JSONTraceExporter,
@@ -133,5 +145,9 @@ def create_trace_exporter(
         exporter_type,
         ConsoleTraceExporter,
     )
+
+    if exporter_type == "json" or exporter_type == "file":
+
+        return exporter_cls(output_dir=settings.TRACE_EXPORT_DIR)
 
     return exporter_cls()

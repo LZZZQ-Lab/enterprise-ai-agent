@@ -1,31 +1,11 @@
-from abc import ABC
-from abc import abstractmethod
+"""
+向后兼容：RAG 层统一使用 app.embedding.BaseEmbedding。
 
+新代码请 from app.embedding import BaseEmbedding。
+"""
 
-class EmbeddingProvider(ABC):
-    """
-    Embedding 模型抽象接口。
+from app.embedding.base import BaseEmbedding
 
-    单一职责：将文本转换为向量。
-    后续可替换为 OpenAI、BGE、Jina 等实现。
-    """
+EmbeddingProvider = BaseEmbedding
 
-    @abstractmethod
-    def embed(
-        self,
-        text: str,
-    ) -> list[float]:
-        """
-        将单条文本转换为 embedding 向量。
-        """
-
-        pass
-
-    @property
-    @abstractmethod
-    def dimension(self) -> int:
-        """
-        向量维度，供 VectorStore 校验使用。
-        """
-
-        pass
+__all__ = ["EmbeddingProvider", "BaseEmbedding"]

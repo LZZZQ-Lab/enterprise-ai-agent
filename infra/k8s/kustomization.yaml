@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: enterprise-ai
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - redis.yaml
+  - chroma.yaml
+  - vllm.yaml
+  - api.yaml
+  - ingress.yaml
+  - hpa.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: enterprise-ai-agent
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: enterprise-ai-agent/api
+    newName: enterprise-ai-agent/api
+    newTag: latest
