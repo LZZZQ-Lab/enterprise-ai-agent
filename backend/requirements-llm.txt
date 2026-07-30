@@ -24,7 +24,7 @@
 #
 # torch 需单独安装以匹配 CUDA 版本，见 https://pytorch.org/get-started/locally/
 
-torch>=2.1.0
+torch>=2.13.0
 transformers>=4.40.0
 accelerate>=0.30.0
 sentencepiece>=0.2.0
