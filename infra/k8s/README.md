@@ -37,14 +37,14 @@ kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.allocatable.
 在仓库根目录：
 
 ```bash
-docker build -f deploy/Dockerfile -t enterprise-ai-agent/api:latest .
+docker build -f infra/deploy/Dockerfile -t enterprise-ai-agent/api:latest .
 # docker tag ... && docker push ...   # 推送到企业镜像仓库后改 kustomization images
 ```
 
 ## 部署步骤
 
 ```bash
-cd deploy/k8s
+cd infra/k8s
 cp secret.example.yaml secret.yaml
 # 编辑 secret.yaml 填入 API_KEY / VLLM_API_KEY
 
@@ -62,7 +62,7 @@ kubectl apply -f hpa.yaml
 或使用 Kustomize（会一并 apply `secret.example.yaml`，生产请改用外部 Secret 管理）：
 
 ```bash
-kubectl apply -k deploy/k8s
+kubectl apply -k infra/k8s
 ```
 
 ## 访问

@@ -101,6 +101,7 @@ jobs:
 
       - name: Validate Docker Compose files
         run: |
+          docker compose -f ../infra/deploy/docker-compose.yml config --quiet
           docker compose -f ../deploy/docker-compose.yml config --quiet
           docker compose -f ../infra/docker/docker-compose.yml config --quiet
           docker compose -f ../infra/docker/docker-compose.api-only.yml config --quiet

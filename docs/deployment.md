@@ -1,6 +1,6 @@
 # 企业部署指南（Task 2.7 / 4.7）
 
-> **生产全栈（推荐企业环境）**：Nginx + API + Agent Worker + vLLM + Chroma + Redis → **[production_deploy.md](./production_deploy.md)**，`deploy/docker-compose.yml`。
+> **生产全栈（推荐企业环境）**：Nginx + API + Agent Worker + vLLM + Chroma + Redis → **[production_deploy.md](./production_deploy.md)**，`infra/deploy/docker-compose.yml`。
 
 本文说明使用 **Docker Compose** 同时启动（**轻量栈 `docker/`**）：
 

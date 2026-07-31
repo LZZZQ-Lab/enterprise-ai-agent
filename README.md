@@ -22,6 +22,7 @@
   <a href="#技术路线">技术路线</a> ·
   <a href="#roadmap">Roadmap</a> ·
   <a href="docs/STRUCTURE.md">目录结构</a> ·
+  <a href="docs/README.md">文档索引</a> ·
   <a href="docs/DEVELOPMENT.md">开发指南</a>
 </p>
 
@@ -140,12 +141,12 @@ enterprise-ai-agent/
 ├── core/              agent · workflow · memory · tools
 ├── llm/               providers · router · gateway
 ├── knowledge/         rag · embedding · vectorstore
-├── infra/             docker · k8s · monitoring
+├── infra/             docker · deploy · k8s · monitoring
 ├── backend/           app/ 实现 · applications/ 应用 · scripts/
 ├── tests/             unit · integration · e2e
 ├── examples/          独立 Demo
-├── deploy/            生产 Compose（Nginx 全栈）
-└── docs/              架构 · API · 部署 · STRUCTURE.md
+├── deploy/            兼容入口（→ infra/deploy）
+└── docs/              架构 · API · 部署 · [文档索引](docs/README.md)
 ```
 
 ---

@@ -50,7 +50,7 @@ flowchart LR
 |------|------|------|
 | 本地脚本 | `backend/scripts/start_vllm_server.sh` | WSL / Linux 开发 |
 | 轻量 Compose | `infra/docker/docker-compose.yml` | API + vLLM 两容器 |
-| 生产 Compose | `deploy/docker-compose.yml` | Nginx + API + vLLM + Chroma + Redis |
+| 生产 Compose | `infra/deploy/docker-compose.yml` | Nginx + API + vLLM + Chroma + Redis |
 | Kubernetes | `infra/k8s/vllm.yaml` | 企业集群 + GPU 调度 + HPA |
 
 配置切换仅需 `.env`：

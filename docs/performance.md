@@ -24,7 +24,7 @@
 |------|----------|------|
 | **A. vLLM 实测** | WSL2 脚本 `start_vllm_server.sh` | Task 2.6 真机 GPU 延迟/吞吐 |
 | **B. vLLM Docker** | `infra/docker/docker-compose.yml` | API + vLLM 两容器，GPU passthrough |
-| **C. 生产栈** | `deploy/docker-compose.yml` | Nginx + API + vLLM + Chroma + Redis |
+| **C. 生产栈** | `infra/deploy/docker-compose.yml` | Nginx + API + vLLM + Chroma + Redis |
 | **D. 基准套件** | `benchmark.suite_runner --mock` | CI / 无 GPU，合成数据布局验证 |
 | **E. 压测 Mock** | `loadtest.run_stress --mock` | Locust + 内置 Mock API |
 | **F. 平台路径** | 本地 pytest / Demo | FakeEmbedding + InMemory · Mock LLM |

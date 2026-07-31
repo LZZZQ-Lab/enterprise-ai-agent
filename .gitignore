@@ -60,12 +60,18 @@ backend/workspace/**/.pytest_cache/
 # Platform runtime audit log
 backend/platform_data/audit.json
 
-# Local runs / demos output (Task 9.x)
+# 本地 runs / demos output (Task 9.x)
 project_runs/
 backend/project_runs/
 examples/_output/
 backend/tmp-*/
 backend/workspace/
+
+# 本地面试材料（不推送 GitHub）
+docs/interview/
+
+# 运行时报告（canonical: backend/artifacts/）
+/artifacts/
 
 # Knowledge uploads (runtime data)
 backend/data/knowledge_uploads/

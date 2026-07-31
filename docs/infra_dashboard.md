@@ -1,6 +1,6 @@
 # AI Infra Dashboard（Task 7.8）
 
-本目录为 **Dashboard Demo 说明**；实现代码位于 `backend/app/dashboard/`。
+实现代码：`backend/app/dashboard/` · Canonical 导入：`apps.dashboard`
 
 ## 访问方式
 
@@ -33,4 +33,6 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ## 与 Software Team Dashboard 的区别
 
 - 项目看板 API：`/api/v1/dashboard/*`（`app/api/dashboard/`）
-- AI 基础设施看板：`/api/v1/infra/dashboard/*`（本 Task）
+- AI 基础设施看板：`/api/v1/infra/dashboard/*`（本模块）
+
+更多监控说明见 [monitoring.md](./monitoring.md)。

@@ -20,7 +20,7 @@ bash scripts/run_tests.sh
 
 echo "==> ruff lint"
 pip install -q -r requirements-dev.txt 2>/dev/null || true
-python -m ruff check app tests benchmark loadtest security scripts observability 2>/dev/null || bash scripts/run_lint.sh
+python -m ruff check app ../tests benchmark loadtest security scripts observability 2>/dev/null || bash scripts/run_lint.sh
 
 echo "==> export OpenAPI"
 python scripts/export_openapi.py

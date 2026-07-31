@@ -567,7 +567,7 @@ flowchart LR
 |------|------|------|----------|
 | 本地开发 | `backend/` + uvicorn | API only | 日常开发、单元测试 |
 | 轻量 Docker | `infra/docker/` | API ± vLLM | Swagger Demo、无 GPU 仅 API |
-| 生产 Compose | `deploy/` | Nginx + API + Agent + vLLM + Chroma + Redis | 单机 / 小集群生产 |
+| 生产 Compose | `infra/deploy/` | Nginx + API + Agent + vLLM + Chroma + Redis | 单机 / 小集群生产 |
 | Kubernetes | `infra/k8s/` | Deployment + Ingress + HPA + PVC | 企业 K8s 集群 |
 
 ### 8.2 生产 Compose 拓扑
@@ -646,13 +646,13 @@ flowchart LR
     CI --> OAI["OpenAPI export + VERSION check"]
     CI -->|success| BUILD["build.yml<br/>Docker build"]
     BUILD --> IMG1["infra/docker/Dockerfile<br/>api:ci"]
-    BUILD --> IMG2["deploy/Dockerfile<br/>deploy:ci"]
+    BUILD --> IMG2["infra/deploy/Dockerfile<br/>deploy:ci"]
 ```
 
 | 镜像 | Dockerfile | 用途 |
 |------|------------|------|
 | 开发 / 轻量 API | `infra/docker/Dockerfile` | API + Canonical 包 |
-| 生产 API | `deploy/Dockerfile` | API + knowledge 依赖 + Redis |
+| 生产 API | `infra/deploy/Dockerfile` | API + knowledge 依赖 + Redis |
 
 ### 8.5 环境变量分层
 

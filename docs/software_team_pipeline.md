@@ -221,7 +221,7 @@ flowchart LR
 ```
 
 婕旂ず璺緞锛歚backend/workspace/library_p0_run13/`  
-鎿嶄綔鎸囧崡锛氳鏍圭洰褰?[DEMO.md](../DEMO.md)
+操作指南：见 [docs/demos/library_system.md](./demos/library_system.md)
 
 ---
 
@@ -251,5 +251,5 @@ enterprise-ai-agent/
 鈹?  鈹斺攢鈹€ workspace/library_p0_run13/   # Demo 鏍蜂緥
 鈹溾攢鈹€ frontend/                         # Dashboard UI
 鈹溾攢鈹€ docs/ARCHITECTURE.md              # 鏈枃妗?鈹溾攢鈹€ README.md
-鈹斺攢鈹€ DEMO.md
+└── docs/demos/library_system.md
 ```

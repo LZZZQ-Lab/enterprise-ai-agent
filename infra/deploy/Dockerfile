@@ -1,6 +1,6 @@
 # Production API + Agent worker image (Task 4.7)
 # Build context: repository root
-#   docker build -f deploy/Dockerfile .
+#   docker build -f infra/deploy/Dockerfile .
 
 FROM python:3.11-slim
 

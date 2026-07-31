@@ -34,11 +34,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build production image (deploy/Dockerfile)
+      - name: Build production image (infra/deploy/Dockerfile)
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: deploy/Dockerfile
+          file: infra/deploy/Dockerfile
           push: false
           tags: enterprise-ai-agent/deploy:ci
           build-args: |

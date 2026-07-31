@@ -7,6 +7,7 @@ BACKEND_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${BACKEND_ROOT}"
 
 echo "==> ruff check"
-python -m ruff check app tests benchmark loadtest scripts "$@"
+# tests/ 在仓库根目录（Task 9.1）；其余路径相对 backend/
+python -m ruff check app ../tests benchmark loadtest scripts "$@"
 
 echo "Lint OK"

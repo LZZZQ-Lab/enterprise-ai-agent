@@ -1,43 +1,44 @@
-# 项目目录结构（Task 9.1）
+# 项目目录结构
 
-Enterprise AI Platform 采用 **Canonical 模块路径 + Legacy 兼容层** 的渐进式迁移策略：新代码优先使用顶层包（`core/`、`llm/`、`knowledge/`），实现仍位于 `backend/app/`，`app.*` 导入继续有效。
+Enterprise AI Platform 采用 **Canonical 模块路径 + Legacy 兼容层** 的渐进式迁移策略：新代码优先使用顶层包（`core/`、`llm/`、`knowledge/`、`apps/`），实现仍位于 `backend/app/`，`app.*` 导入继续有效。
 
 ## 顶层目录
 
 ```text
 enterprise-ai-agent/
-├── apps/                    # 应用入口（API、Dashboard）
+├── apps/                    # 应用入口（API、Dashboard facade）
 │   ├── api/
 │   └── dashboard/
 ├── core/                    # Agent / Workflow / Memory / Tools
-│   ├── agent/
-│   ├── workflow/
-│   ├── memory/
-│   └── tools/
 ├── llm/                     # Provider / Router / Gateway
-│   ├── providers/
-│   ├── router/
-│   └── gateway/
 ├── knowledge/               # RAG / Embedding / VectorStore
-│   ├── rag/
-│   ├── embedding/
-│   └── vectorstore/
-├── infra/                   # 部署与监控
-│   ├── docker/              # Compose + Dockerfile（开发/轻量栈）
+├── infra/                   # 部署与监控（统一基础设施目录）
+│   ├── docker/              # 开发 / 轻量 Compose + Dockerfile
+│   ├── deploy/              # 生产 Compose（Nginx 全栈）
 │   ├── k8s/                 # Kubernetes 清单
-│   └── monitoring/          # Prometheus 指标（Python facade）
+│   └── monitoring/          # Prometheus 指标 facade
 ├── backend/                 # Python 运行时根目录
 │   ├── app/                 # Legacy 实现包（与 canonical 等价）
 │   ├── applications/        # 业务应用（Software Team 等）
 │   ├── benchmark/ · loadtest/ · security/ · observability/
+│   ├── artifacts/           # 测试 / 压测 / Benchmark 报告输出
 │   └── scripts/
 ├── tests/                   # pytest（unit / integration / e2e）
-├── examples/                # 独立 Demo
-├── docs/                    # 架构与部署文档
-├── deploy/                  # 生产 Compose（Nginx 全栈）
+├── examples/                # 独立 Demo 脚本
+├── docs/                    # 架构、部署与开发文档
 ├── frontend/                # Vue Dashboard
-└── docker/                  # 兼容入口（include → infra/docker）
+├── deploy/                  # 兼容入口（→ infra/deploy）
+└── docker/                  # 兼容入口（→ infra/docker）
 ```
+
+## 已移除的冗余顶层目录
+
+| 原路径 | 迁移至 |
+|--------|--------|
+| `benchmark/`（薄包装脚本） | 直接在 `backend/` 下运行 `python -m benchmark.*` |
+| `dashboard/`（仅 README） | [docs/infra_dashboard.md](./infra_dashboard.md) |
+| `artifacts/`（重复报告） | `backend/artifacts/` |
+| `DEMO.md` | [docs/demos/library_system.md](./demos/library_system.md) |
 
 ## Canonical ↔ Legacy 映射
 
@@ -56,6 +57,15 @@ enterprise-ai-agent/
 | `from knowledge.vectorstore import get_vector_store` | `from app.vectorstore import ...` | `backend/app/vectorstore/` |
 | `from infra.monitoring import infra_metrics` | `from app.monitoring import ...` | `backend/app/monitoring/` |
 
+## 部署路径
+
+| 场景 | 推荐路径 | 兼容路径 |
+|------|----------|----------|
+| 轻量 API / 开发栈 | `infra/docker/docker-compose*.yml` | `docker/docker-compose*.yml` |
+| 生产全栈 | `infra/deploy/docker-compose.yml` | `deploy/docker-compose.yml` |
+| Kubernetes | `infra/k8s/` | — |
+| 生产镜像构建 | `infra/deploy/Dockerfile` | — |
+
 ## 运行与测试
 
 ```bash
@@ -68,11 +78,11 @@ cd backend && uvicorn apps.api:app --port 8001
 # 测试
 cd backend && pytest -m "not integration"
 
-# Docker（推荐）
+# Docker 轻量栈
 docker compose -f infra/docker/docker-compose.api-only.yml up --build
 
-# Docker（兼容旧路径）
-docker compose -f docker/docker-compose.api-only.yml up --build
+# Docker 生产栈
+docker compose -f infra/deploy/docker-compose.yml up --build
 ```
 
 ## PYTHONPATH

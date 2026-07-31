@@ -48,7 +48,7 @@ print('VERSION OK:', v)
 
 ```bash
 docker build -f docker/Dockerfile -t enterprise-ai-agent/api:release .
-docker build -f deploy/Dockerfile -t enterprise-ai-agent/deploy:release .
+docker build -f infra/deploy/Dockerfile -t enterprise-ai-agent/deploy:release .
 ```
 
 ### 4. Git Tag 与 GitHub Release

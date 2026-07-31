@@ -39,16 +39,18 @@
 ## 目录
 
 ```text
-deploy/
+infra/deploy/
   Dockerfile
   docker-compose.yml
   nginx.conf
   env.example
 ```
 
-旧版两服务栈（仅 backend + llm）仍保留在 `docker/`，见 [deployment.md](./deployment.md)。
+兼容旧路径：`deploy/docker-compose.yml` 通过 Compose `include` 转发至本目录。
 
-Kubernetes 企业部署（Task 7.7）见 [../deploy/k8s/README.md](../deploy/k8s/README.md)。
+轻量两服务栈（仅 backend + llm）见 [infra/docker/](../infra/docker/README.md) 或 [deployment.md](./deployment.md)。
+
+Kubernetes 企业部署（Task 7.7）见 [infra/k8s/README.md](../infra/k8s/README.md)。
 
 ## 前置条件
 
@@ -67,7 +69,7 @@ docker run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
 在 **仓库根目录**：
 
 ```bash
-docker compose -f deploy/docker-compose.yml up --build
+docker compose -f infra/deploy/docker-compose.yml up --build
 ```
 
 或：
@@ -83,15 +85,15 @@ docker compose up --build
 ### 后台运行
 
 ```bash
-docker compose -f deploy/docker-compose.yml up --build -d
-docker compose -f deploy/docker-compose.yml logs -f vllm api nginx
+docker compose -f infra/deploy/docker-compose.yml up --build -d
+docker compose -f infra/deploy/docker-compose.yml logs -f vllm api nginx
 ```
 
 ### 停止与清理
 
 ```bash
-docker compose -f deploy/docker-compose.yml down
-# 含数据卷：docker compose -f deploy/docker-compose.yml down -v
+docker compose -f infra/deploy/docker-compose.yml down
+# 含数据卷：docker compose -f infra/deploy/docker-compose.yml down -v
 ```
 
 ## 验证
@@ -107,19 +109,19 @@ curl http://127.0.0.1:8080/metrics
 内网 vLLM（不经过 Nginx，需 `docker exec` 或临时暴露端口）：
 
 ```bash
-docker compose -f deploy/docker-compose.yml exec vllm curl -s http://127.0.0.1:8000/health
+docker compose -f infra/deploy/docker-compose.yml exec vllm curl -s http://127.0.0.1:8000/health
 ```
 
 Redis / Agent Worker：
 
 ```bash
-docker compose -f deploy/docker-compose.yml exec redis redis-cli ping
-docker compose -f deploy/docker-compose.yml exec redis redis-cli get agent:worker:ready
+docker compose -f infra/deploy/docker-compose.yml exec redis redis-cli ping
+docker compose -f infra/deploy/docker-compose.yml exec redis redis-cli get agent:worker:ready
 ```
 
 ## 环境变量
 
-复制 `deploy/env.example` → `deploy/.env`。关键项：
+复制 `infra/deploy/env.example` → `infra/deploy/.env`（兼容：`deploy/env.example`）。关键项：
 
 | 变量 | 默认 | 说明 |
 |------|------|------|

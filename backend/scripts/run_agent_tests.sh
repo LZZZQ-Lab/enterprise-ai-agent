@@ -8,8 +8,8 @@ cd "${BACKEND_ROOT}"
 
 mkdir -p artifacts
 
-echo "==> pytest tests/agents"
-python -m pytest tests/agents -v --tb=short
+echo "==> pytest ../tests/agents"
+python -m pytest ../tests/agents -v --tb=short
 
 echo
 echo "Agent Test Report: ${BACKEND_ROOT}/artifacts/agent_test_report.md"

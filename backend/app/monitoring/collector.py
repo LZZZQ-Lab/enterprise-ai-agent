@@ -144,26 +144,26 @@ class InfraMetricsCollector:
         snap: GpuSnapshot,
         labels: dict[str, str],
     ) -> None:
-        if snap.memory_used_mib is not None:
-            self._registry.gauge_set(
-                METRIC_GPU_MEMORY_USED,
-                snap.memory_used_mib,
-                labels=labels,
-            )
-
-        if snap.memory_total_mib is not None:
-            self._registry.gauge_set(
-                METRIC_GPU_MEMORY_TOTAL,
-                snap.memory_total_mib,
-                labels=labels,
-            )
-
-        if snap.utilization_percent is not None:
-            self._registry.gauge_set(
-                METRIC_GPU_UTILIZATION,
-                snap.utilization_percent,
-                labels=labels,
-            )
+        # 无 GPU / nvidia-smi 时仍写出 0，保证 /metrics 始终有 # TYPE 行（CI 友好）
+        self._registry.gauge_set(
+            METRIC_GPU_MEMORY_USED,
+            snap.memory_used_mib if snap.memory_used_mib is not None else 0.0,
+            labels=labels,
+        )
+        self._registry.gauge_set(
+            METRIC_GPU_MEMORY_TOTAL,
+            snap.memory_total_mib if snap.memory_total_mib is not None else 0.0,
+            labels=labels,
+        )
+        self._registry.gauge_set(
+            METRIC_GPU_UTILIZATION,
+            (
+                snap.utilization_percent
+                if snap.utilization_percent is not None
+                else 0.0
+            ),
+            labels=labels,
+        )
 
     def scrape(self) -> str:
         """Prometheus 文本（含最新 GPU + 服务 Counter/Histogram）。"""

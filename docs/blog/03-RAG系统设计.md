@@ -114,7 +114,7 @@ ENABLE_KNOWLEDGE_TOOL=true
 KNOWLEDGE_UPLOAD_DIR=./data/knowledge_uploads
 ```
 
-生产建议：`EMBEDDING_PROVIDER=local|openai` + `VECTOR_STORE_PROVIDER=chroma`，Compose 栈见 `deploy/docker-compose.yml` 中的 `chroma` 服务。
+生产建议：`EMBEDDING_PROVIDER=local|openai` + `VECTOR_STORE_PROVIDER=chroma`，Compose 栈见 `infra/deploy/docker-compose.yml` 中的 `chroma` 服务。
 
 ### 4. Agent Tool 集成
 
