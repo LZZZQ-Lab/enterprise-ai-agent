@@ -29,6 +29,8 @@ RUN pip install --no-cache-dir --default-timeout=300 \
 
 COPY backend/app /app/app
 COPY backend/applications /app/applications
+COPY backend/security /app/security
+COPY backend/observability /app/observability
 COPY apps /app/apps
 COPY core /app/core
 COPY llm /app/llm
@@ -38,7 +40,9 @@ COPY infra/monitoring /app/infra/monitoring
 
 ENV PYTHONPATH=/app
 
-RUN test -f /app/applications/dashboard/dashboard_service.py
+RUN test -f /app/applications/dashboard/dashboard_service.py \
+    && test -f /app/security/auth.py \
+    && python -c "import app.main"
 
 EXPOSE 8001
 
