@@ -1,14 +1,14 @@
-fastapi==0.116.1
-uvicorn[standard]==0.35.0
-python-dotenv==1.1.1
-pydantic-settings==2.10.1
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+python-dotenv==1.2.2
+pydantic-settings==2.14.2
 openai==1.99.9
 
 httpx==0.28.1
 
-python-multipart==0.0.20
+python-multipart==0.0.32
 
-PyYAML==6.0.2
+PyYAML==6.0.3
 
 redis==5.2.1
 
